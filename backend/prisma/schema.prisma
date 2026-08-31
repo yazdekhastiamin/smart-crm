@@ -31,6 +31,7 @@ model Contact {
   position   String?
   email      String?
   phone      String?
+  city       String?
   notes      String?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
@@ -55,7 +56,7 @@ model Deal {
   id                Int           @id @default(autoincrement())
   title             String
   value             Float // ارزش ریالی
-  probability       Float? // override دستی؛ خالی یعنی از winProbability مرحله استفاده شود
+  probability       Float         @default(0) // خروجی پایدارشده‌ی forecastEngine؛ برای معاملات بسته یعنی ۱ (برد) یا ۰ (باخت)
   status            String        @default("open") // "open" | "won" | "lost"
   source            String? // منبع لید
   industry          String? // صنعت مشتری (برای تحلیل الگو - بخش ۳.۴)

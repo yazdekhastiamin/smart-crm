@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma.js";
+import { recalculateDealProbability } from "../services/forecastEngine.js";
 
 export async function listActivities(req, res, next) {
   try {
@@ -29,6 +30,8 @@ export async function createActivity(req, res, next) {
         ownerId: ownerId ? Number(ownerId) : undefined,
       },
     });
+    // تعامل تازه یعنی سیگنال «تازگی آخرین تعامل» عوض شده — probability را به‌روز می‌کند.
+    if (activity.dealId) await recalculateDealProbability(activity.dealId);
     res.status(201).json(activity);
   } catch (err) {
     next(err);
