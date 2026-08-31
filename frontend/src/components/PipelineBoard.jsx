@@ -3,7 +3,7 @@ import { api } from "../services/api";
 import DealCard from "./DealCard";
 import { formatToman } from "../utils/format";
 
-export default function PipelineBoard() {
+export default function PipelineBoard({ refreshToken, onSelectDeal }) {
   const [stages, setStages] = useState([]);
   const [deals, setDeals] = useState([]);
   const [error, setError] = useState(null);
@@ -17,7 +17,7 @@ export default function PipelineBoard() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshToken]);
 
   if (loading) return <p>در حال بارگذاری قیف فروش...</p>;
   if (error) return <p style={{ color: "crimson" }}>{error}</p>;
@@ -41,7 +41,7 @@ export default function PipelineBoard() {
             <div className="pipeline-column-body">
               {stageDeals.length === 0 && <p className="pipeline-empty">فرصتی در این مرحله نیست</p>}
               {stageDeals.map((deal) => (
-                <DealCard key={deal.id} deal={deal} />
+                <DealCard key={deal.id} deal={deal} onClick={() => onSelectDeal(deal.id)} />
               ))}
             </div>
           </div>

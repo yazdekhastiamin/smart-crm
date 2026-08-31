@@ -48,4 +48,7 @@ export const api = {
   alerts: {
     list: () => request("/alerts"),
   },
+  users: {
+    list: () => request("/users"),
+  },
 };

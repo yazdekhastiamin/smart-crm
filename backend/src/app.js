@@ -7,6 +7,7 @@ import activitiesRouter from "./routes/activities.js";
 import stagesRouter from "./routes/stages.js";
 import forecastRouter from "./routes/forecast.js";
 import alertsRouter from "./routes/alerts.js";
+import usersRouter from "./routes/users.js";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler.js";
 
 export const app = express();
@@ -22,6 +23,7 @@ app.use("/api/activities", activitiesRouter);
 app.use("/api/stages", stagesRouter);
 app.use("/api/forecast", forecastRouter);
 app.use("/api/alerts", alertsRouter);
+app.use("/api/users", usersRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

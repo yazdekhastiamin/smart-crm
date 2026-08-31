@@ -3,13 +3,13 @@ import { api } from "../services/api";
 
 const MAX_ITEMS = 5;
 
-export default function FollowUpAlerts() {
+export default function FollowUpAlerts({ refreshToken }) {
   const [alerts, setAlerts] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     api.alerts.list().then(setAlerts).catch((err) => setError(err.message));
-  }, []);
+  }, [refreshToken]);
 
   if (error) return <p style={{ color: "crimson" }}>{error}</p>;
   if (!alerts) return null;

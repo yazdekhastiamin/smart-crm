@@ -150,6 +150,11 @@ main {
   padding: 0.75rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   border-inline-start: 4px solid transparent;
+  cursor: pointer;
+}
+
+.deal-card:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .deal-card.risk-low {
@@ -199,4 +204,262 @@ main {
 
 .risk-dot.risk-high {
   background: #dc2626;
+}
+
+/* --- layout helpers --- */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.page-header h1,
+.page-header h2 {
+  margin: 0;
+}
+
+.plain-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.plain-list li {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* --- buttons --- */
+
+button {
+  font-family: inherit;
+  font-size: 0.9rem;
+  background: #1f2937;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.link-button {
+  background: none;
+  color: #2563eb;
+  padding: 0;
+}
+
+/* --- forms --- */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+
+.form-grid-full {
+  grid-column: 1 / -1;
+}
+
+.form-grid label,
+form > label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111827;
+}
+
+.form-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-actions-between {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.form-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-tabs button {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.form-tabs button.active {
+  background: #1f2937;
+  color: #ffffff;
+}
+
+.activity-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.activity-form select {
+  flex: 0 0 120px;
+}
+
+.activity-form input {
+  flex: 1;
+}
+
+/* --- modal --- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+
+.modal-panel {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-panel-wide {
+  max-width: 720px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.modal-close {
+  background: none;
+  color: #6b7280;
+  padding: 0.2rem 0.5rem;
+  font-size: 1rem;
+}
+
+/* --- deal detail panel --- */
+
+.deal-detail-section {
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.deal-detail-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.deal-detail-section h3 {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+}
+
+.deal-detail-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.deal-detail-section-header h3 {
+  margin: 0;
+}
+
+.deal-detail-probability {
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.contact-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.activity-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.activity-timeline li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  font-size: 0.85rem;
+  border-inline-start: 2px solid #e5e7eb;
+  padding-inline-start: 0.6rem;
+}
+
+.activity-type {
+  font-weight: 600;
+  color: #1f2937;
+  flex: 0 0 auto;
+}
+
+.activity-content {
+  color: #4b5563;
+  flex: 1;
+}
+
+.activity-date {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }

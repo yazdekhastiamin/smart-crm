@@ -90,6 +90,7 @@ export async function recalculateDealProbability(dealId) {
   return prisma.deal.update({
     where: { id: dealId },
     data: { probability, previousProbability: deal.probability },
+    include: { contact: true, stage: true, owner: true },
   });
 }
 

@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { formatToman } from "../utils/format";
 
-export default function ForecastBanner() {
+export default function ForecastBanner({ refreshToken }) {
   const [forecast, setForecast] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     api.forecast.get().then(setForecast).catch((err) => setError(err.message));
-  }, []);
+  }, [refreshToken]);
 
   return (
     <div className="forecast-banner">

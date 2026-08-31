@@ -24,9 +24,9 @@ export async function getContact(req, res, next) {
 
 export async function createContact(req, res, next) {
   try {
-    const { name, company, position, email, phone, notes } = req.body;
+    const { name, company, position, email, phone, city, notes } = req.body;
     const contact = await prisma.contact.create({
-      data: { name, company, position, email, phone, notes },
+      data: { name, company, position, email, phone, city, notes },
     });
     res.status(201).json(contact);
   } catch (err) {
@@ -36,10 +36,10 @@ export async function createContact(req, res, next) {
 
 export async function updateContact(req, res, next) {
   try {
-    const { name, company, position, email, phone, notes } = req.body;
+    const { name, company, position, email, phone, city, notes } = req.body;
     const contact = await prisma.contact.update({
       where: { id: Number(req.params.id) },
-      data: { name, company, position, email, phone, notes },
+      data: { name, company, position, email, phone, city, notes },
     });
     res.json(contact);
   } catch (err) {

@@ -17,7 +17,12 @@ export async function getDeal(req, res, next) {
   try {
     const deal = await prisma.deal.findUnique({
       where: { id: Number(req.params.id) },
-      include: { contact: true, stage: true, owner: true, activities: true },
+      include: {
+        contact: true,
+        stage: true,
+        owner: true,
+        activities: { orderBy: { createdAt: "desc" } },
+      },
     });
     if (!deal) return res.status(404).json({ error: "Deal not found" });
     res.json(deal);
@@ -73,10 +78,14 @@ export async function updateDealStage(req, res, next) {
       },
     });
 
+    const dealId = Number(req.params.id);
     const deal =
       status === "open"
-        ? await recalculateDealProbability(Number(req.params.id))
-        : await prisma.deal.findUnique({ where: { id: Number(req.params.id) }, include: { stage: true } });
+        ? await recalculateDealProbability(dealId)
+        : await prisma.deal.findUnique({
+            where: { id: dealId },
+            include: { contact: true, stage: true, owner: true },
+          });
 
     res.json(deal);
   } catch (err) {
@@ -86,20 +95,26 @@ export async function updateDealStage(req, res, next) {
 
 export async function updateDeal(req, res, next) {
   try {
-    // probability/status از طریق تغییر مرحله (updateDealStage) مدیریت می‌شوند،
-    // نه این endpoint — تا با محاسبه‌ی forecastEngine ناسازگار نشوند.
-    const { title, value, source, industry, companySize, expectedCloseDate } = req.body;
-    const deal = await prisma.deal.update({
-      where: { id: Number(req.params.id) },
+    // status/probability فقط از طریق تغییر مرحله (updateDealStage) نهایی
+    // می‌شوند، نه این endpoint — تا با آن منطق ناسازگار نشوند. با این حال
+    // چون سن معامله (که در محاسبه‌ی probability اثر دارد) با گذر زمان تغییر
+    // می‌کند، بعد از هر ویرایش probability دوباره محاسبه می‌شود.
+    const { title, value, ownerId, source, industry, companySize, expectedCloseDate } = req.body;
+    const dealId = Number(req.params.id);
+    await prisma.deal.update({
+      where: { id: dealId },
       data: {
         title,
         value,
+        ownerId: ownerId === null ? null : ownerId ? Number(ownerId) : undefined,
         source,
         industry,
         companySize,
         expectedCloseDate: expectedCloseDate ? new Date(expectedCloseDate) : undefined,
       },
     });
+
+    const deal = await recalculateDealProbability(dealId);
     res.json(deal);
   } catch (err) {
     next(err);
