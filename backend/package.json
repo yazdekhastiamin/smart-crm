@@ -10,6 +10,7 @@
     "prisma:studio": "prisma studio",
     "prisma:generate": "prisma generate",
     "seed": "node prisma/seed.js",
+    "seed:open-deals": "node prisma/seedOpenDeals.js",
     "import:sample-deals": "node prisma/importSampleDeals.js"
   },
   "dependencies": {

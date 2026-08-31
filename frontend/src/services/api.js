@@ -42,4 +42,7 @@ export const api = {
   stages: {
     list: () => request("/stages"),
   },
+  forecast: {
+    get: () => request("/forecast"),
+  },
 };
