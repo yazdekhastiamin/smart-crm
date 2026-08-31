@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  font-family: "Vazirmatn", Tahoma, sans-serif;
+  background: #f9fafb;
+  color: #111827;
+}
+
+.navbar {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #1f2937;
+}
+
+.navbar a {
+  color: #e5e7eb;
+  text-decoration: none;
+}
+
+.navbar a.active {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+main {
+  padding: 1.5rem;
+}

@@ -1,0 +1,97 @@
+// Local demo uses SQLite (zero setup, single file, easy to reset/seed).
+// To move to Postgres for real deployment later: change provider to
+// "postgresql", point DATABASE_URL at the Postgres instance, and switch
+// `value`/`probability` fields below from Float to Decimal — everything
+// else (models, relations, client API) stays the same.
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// مدیر/مالک یا کارشناس فروش (بخش ۴ SPEC)
+model User {
+  id         Int        @id @default(autoincrement())
+  name       String
+  email      String     @unique
+  role       String     @default("sales_rep") // "owner" | "sales_rep"
+  createdAt  DateTime   @default(now())
+  deals      Deal[]
+  activities Activity[]
+}
+
+// مخاطبین و شرکت‌ها
+model Contact {
+  id         Int        @id @default(autoincrement())
+  name       String
+  company    String?
+  position   String?
+  email      String?
+  phone      String?
+  notes      String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  deals      Deal[]
+  activities Activity[]
+}
+
+// مراحل قابل‌تنظیم قیف فروش (بخش ۳ SPEC) — winProbability پایه‌ی
+// محاسبه‌ی «پیش‌بینی درآمد محتمل» در بخش ۳.۱ است.
+model PipelineStage {
+  id             Int      @id @default(autoincrement())
+  name           String   @unique
+  order          Int
+  winProbability Float // 0..1
+  isWon          Boolean  @default(false)
+  isLost         Boolean  @default(false)
+  deals          Deal[]
+}
+
+// فرصت فروش / معامله
+model Deal {
+  id                Int           @id @default(autoincrement())
+  title             String
+  value             Float // ارزش ریالی
+  probability       Float? // override دستی؛ خالی یعنی از winProbability مرحله استفاده شود
+  status            String        @default("open") // "open" | "won" | "lost"
+  source            String? // منبع لید
+  industry          String? // صنعت مشتری (برای تحلیل الگو - بخش ۳.۴)
+  companySize       String? // اندازه شرکت (برای تحلیل الگو - بخش ۳.۴)
+  expectedCloseDate DateTime?
+  stageEnteredAt    DateTime      @default(now()) // برای سیگنال سرعت پیشرفت بین مراحل
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  contactId Int
+  contact   Contact @relation(fields: [contactId], references: [id])
+
+  stageId Int
+  stage   PipelineStage @relation(fields: [stageId], references: [id])
+
+  ownerId Int?
+  owner   User? @relation(fields: [ownerId], references: [id])
+
+  activities Activity[]
+}
+
+// تعامل، یادداشت، تسک یا یادآور — هم برای مخاطب و هم برای یک فرصت فروش
+model Activity {
+  id        Int       @id @default(autoincrement())
+  type      String // "call" | "meeting" | "note" | "email" | "task"
+  content   String?
+  dueDate   DateTime? // برای تسک/یادآور
+  completed Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  contactId Int?
+  contact   Contact? @relation(fields: [contactId], references: [id])
+
+  dealId Int?
+  deal   Deal? @relation(fields: [dealId], references: [id])
+
+  ownerId Int?
+  owner   User? @relation(fields: [ownerId], references: [id])
+}
