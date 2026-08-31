@@ -45,4 +45,7 @@ export const api = {
   forecast: {
     get: () => request("/forecast"),
   },
+  alerts: {
+    list: () => request("/alerts"),
+  },
 };

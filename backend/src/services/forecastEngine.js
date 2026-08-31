@@ -87,7 +87,10 @@ export async function recalculateDealProbability(dealId) {
   const avgCycleDays = await getAverageCycleDays();
   const probability = dealProbability(deal, avgCycleDays);
 
-  return prisma.deal.update({ where: { id: dealId }, data: { probability } });
+  return prisma.deal.update({
+    where: { id: dealId },
+    data: { probability, previousProbability: deal.probability },
+  });
 }
 
 export async function recalculateOpenDealProbabilities() {
@@ -100,7 +103,12 @@ export async function recalculateOpenDealProbabilities() {
   const updated = [];
   for (const deal of openDeals) {
     const probability = dealProbability(deal, avgCycleDays);
-    updated.push(await prisma.deal.update({ where: { id: deal.id }, data: { probability } }));
+    updated.push(
+      await prisma.deal.update({
+        where: { id: deal.id },
+        data: { probability, previousProbability: deal.probability },
+      })
+    );
   }
   return updated;
 }
