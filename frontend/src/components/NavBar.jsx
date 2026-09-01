@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 const links = [
   { to: "/", label: "داشبورد", end: true },
@@ -7,6 +8,8 @@ const links = [
 ];
 
 export default function NavBar() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <nav className="navbar">
       <span className="navbar-brand">
@@ -18,6 +21,15 @@ export default function NavBar() {
           {link.label}
         </NavLink>
       ))}
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={toggleTheme}
+        aria-label={theme === "dark" ? "تغییر به تم روشن" : "تغییر به تم تیره"}
+        title={theme === "dark" ? "تم روشن" : "تم تیره"}
+      >
+        {theme === "dark" ? "☀️" : "🌙"}
+      </button>
     </nav>
   );
 }

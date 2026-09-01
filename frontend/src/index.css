@@ -16,26 +16,49 @@
 
   --teal: #1c4a52;
   --teal-deep: #143840;
+  --teal-ink: #005864;
   --amber: #bd7526;
+  --amber-fill: #bd7526;
   --amber-tint: #e3a75c;
-  --amber-wash: rgba(189, 117, 38, 0.1);
 
   --status-good: #1f8f72;
-  --status-good-wash: rgba(31, 143, 114, 0.1);
   --status-warning: #a67807;
-  --status-warning-wash: rgba(166, 120, 7, 0.1);
   --status-critical: #a83226;
-  --status-critical-wash: rgba(168, 50, 38, 0.1);
 
-  --ramp-amber-1: #ce9c5c;
-  --ramp-amber-2: #b87f3a;
-  --ramp-amber-3: #9c6425;
-  --ramp-amber-4: #7a4a16;
+  --tooltip-shadow: rgba(32, 36, 43, 0.12);
 
-  --font-sans: "Vazirmatn", Tahoma, sans-serif;
+  --font-sans: "Estedad", Tahoma, sans-serif;
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
+}
+
+/* ==========================================================================
+   تم تیره — نسخه‌ی متناظر هر توکن، نه صرفاً وارونه‌سازی رنگ‌ها.
+   امبر برای متن/تاکید روشن‌تر می‌شود (amber-tint) چون روی سطح تیره باید
+   بخواند؛ رنگ‌های وضعیت با همان OKLCH که برای تم روشن تأیید شده بودند دوباره
+   روی سطح تیره تست شدند (validate_palette.js --mode dark) و همان مقادیر را
+   پاس کردند، پس بدون تغییر باقی مانده‌اند — نه چون فراموش شده، چون خودِ رنگ‌ها
+   قبلاً برای همین بازه‌ی روشنایی طراحی شده بودند.
+   ========================================================================== */
+:root[data-theme="dark"] {
+  --ink: #edeef0;
+  --ink-secondary: #b7bbbe;
+  --ink-muted: #83888c;
+
+  --page: #121417;
+  --surface: #20242b;
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.22);
+
+  --teal: #1f525c;
+  --teal-deep: #15343b;
+  --teal-ink: #5fbacb;
+  --amber: #e3a75c;
+  /* --amber-fill و --amber-tint عمداً ثابت می‌مانند: fill خودش سطح تیره‌ی
+     مستقل است (متن سفید رویش)، و tint از قبل برای نشستن روی پنل تیره طراحی
+     شده بود — تم تیره‌شدنِ کل صفحه چیزی برایش عوض نمی‌کند. */
+  --tooltip-shadow: rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -97,6 +120,21 @@ h3 {
 .navbar a.active {
   color: var(--ink-on-dark);
   border-bottom-color: var(--amber-tint);
+}
+
+.theme-toggle {
+  margin-inline-start: auto;
+  background: none;
+  color: var(--ink-on-dark-secondary);
+  font-size: 1.05rem;
+  line-height: 1;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+}
+
+.theme-toggle:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink-on-dark);
 }
 
 main {
@@ -380,8 +418,8 @@ main {
 button {
   font-family: inherit;
   font-size: 0.9rem;
-  font-weight: 500;
-  background: var(--amber);
+  font-weight: 600;
+  background: var(--amber-fill);
   color: #ffffff;
   border: none;
   border-radius: var(--radius-sm);
@@ -400,7 +438,7 @@ button:disabled {
 
 .link-button {
   background: none;
-  color: var(--teal);
+  color: var(--teal-ink);
   padding: 0;
   font-weight: 600;
 }
@@ -641,7 +679,7 @@ textarea:focus {
   border-radius: var(--radius-sm);
   padding: 0.5rem 0.7rem;
   font-size: 0.8rem;
-  box-shadow: 0 4px 12px rgba(32, 36, 43, 0.12);
+  box-shadow: 0 4px 12px var(--tooltip-shadow);
 }
 
 .chart-tooltip-dark {

@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import DealCard from "./DealCard";
 import { formatToman } from "../utils/format";
-import { STAGE_RAMP } from "../utils/theme";
+import { stageRamp } from "../utils/theme";
+import { useTheme } from "../context/ThemeContext";
 
 export default function PipelineBoard({ refreshToken, onSelectDeal }) {
+  const { theme } = useTheme();
+  const ramp = stageRamp(theme);
   const [stages, setStages] = useState([]);
   const [deals, setDeals] = useState([]);
   const [error, setError] = useState(null);
@@ -35,7 +38,7 @@ export default function PipelineBoard({ refreshToken, onSelectDeal }) {
           <div className="pipeline-column" key={stage.id}>
             <div
               className="pipeline-column-header"
-              style={{ borderTopColor: STAGE_RAMP[index % STAGE_RAMP.length] }}
+              style={{ borderTopColor: ramp[index % ramp.length] }}
             >
               <h3>{stage.name}</h3>
               <span className="pipeline-column-meta">
