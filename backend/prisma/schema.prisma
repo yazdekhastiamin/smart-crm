@@ -102,9 +102,14 @@ model Activity {
 // هر بار forecastEngine محاسبه می‌شود، رکورد همان روز به‌روزرسانی می‌شود
 // (نه یک ردیف جدید)، تا نمودار حداکثر یک نقطه در روز داشته باشد.
 model ForecastSnapshot {
-  id              Int      @id @default(autoincrement())
-  date            DateTime @unique // نیمه‌شب همان روز (کلید یکتایی روزانه)
-  totalForecast   Float
-  openDealsCount  Int
-  createdAt       DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  date           DateTime @unique // نیمه‌شب همان روز (کلید یکتایی روزانه)
+  totalForecast  Float
+  openDealsCount Int
+  // برای اسپارک‌لاین کارت‌های KPI — هر سه از تاریخچه‌ی واقعی معاملات
+  // بازسازی می‌شوند (createdAt/updatedAt واقعی)، نه عدد ساختگی.
+  conversionRate Float @default(0)
+  avgCycleDays   Float @default(0)
+  followUpCount  Int   @default(0)
+  createdAt      DateTime @default(now())
 }

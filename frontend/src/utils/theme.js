@@ -29,6 +29,18 @@ export function statusColors(theme) {
   return { good: t.good, warning: t.warning, critical: t.critical };
 }
 
+// رنگ متن/آیکون تیل (--teal-ink) و خاکستری خنثی (--ink-muted) — دقیقاً
+// همان مقادیر index.css، چون کارت‌های KPI این رنگ‌ها را هم برای آیکون (CSS)
+// و هم برای اسپارک‌لاین (Recharts، جاوااسکریپتی) لازم دارند.
+const TONE_HEX = {
+  light: { amber: "#bd7526", teal: "#005864", good: "#1f8f72", critical: "#a83226", neutral: "#898f94" },
+  dark: { amber: "#e3a75c", teal: "#5fbacb", good: "#1f8f72", critical: "#a83226", neutral: "#83888c" },
+};
+
+export function kpiToneColor(theme, tone) {
+  return (TONE_HEX[theme] ?? TONE_HEX.light)[tone] ?? TONE_HEX.light.amber;
+}
+
 // رنگ خط/ناحیه‌ی نمودار روند — همان amber برند هر تم (روی سطح روشن، امبر
 // عمیق کافی است؛ روی سطح تیره باید tint روشن‌تر باشد تا خوانا بماند).
 export function trendLineColor(theme) {

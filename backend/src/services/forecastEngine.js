@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma.js";
+import { getFollowUpAlerts } from "./alertEngine.js";
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -120,28 +121,45 @@ function startOfDay(date) {
   return d;
 }
 
-async function recordSnapshot(totalForecast, openDealsCount) {
+async function getConversionRate() {
+  const [won, lost] = await Promise.all([
+    prisma.deal.count({ where: { status: "won" } }),
+    prisma.deal.count({ where: { status: "lost" } }),
+  ]);
+  return won + lost > 0 ? won / (won + lost) : 0;
+}
+
+async function recordSnapshot({ totalForecast, openDealsCount, conversionRate, avgCycleDays, followUpCount }) {
   const date = startOfDay(new Date());
-  await prisma.forecastSnapshot.upsert({
-    where: { date },
-    update: { totalForecast, openDealsCount },
-    create: { date, totalForecast, openDealsCount },
-  });
+  const data = { totalForecast, openDealsCount, conversionRate, avgCycleDays, followUpCount };
+  await prisma.forecastSnapshot.upsert({ where: { date }, update: data, create: { date, ...data } });
 }
 
 // پیش‌بینی کل قیف = مجموع (ارزش × احتمال) همه‌ی معاملات باز (بخش ۳.۱ SPEC).
 // قبل از جمع زدن، احتمال هر معامله را تازه می‌کند تا عدد همیشه به‌روز باشد.
+// همین‌جا بقیه‌ی معیارهای کارت‌های KPI هم محاسبه و برای نمودار روند
+// (اسپارک‌لاین‌ها) در ForecastSnapshot ثبت می‌شوند.
 export async function getPipelineForecast() {
   const deals = await recalculateOpenDealProbabilities();
   const totalForecast = deals.reduce((sum, deal) => sum + deal.value * deal.probability, 0);
   const avgCycleDays = await getAverageCycleDays();
+  const conversionRate = await getConversionRate();
+  const followUpAlerts = await getFollowUpAlerts();
 
-  await recordSnapshot(totalForecast, deals.length);
+  await recordSnapshot({
+    totalForecast,
+    openDealsCount: deals.length,
+    conversionRate,
+    avgCycleDays,
+    followUpCount: followUpAlerts.length,
+  });
 
   return {
     totalForecast,
     openDealsCount: deals.length,
     avgCycleDays,
+    conversionRate,
+    followUpCount: followUpAlerts.length,
     generatedAt: new Date().toISOString(),
   };
 }

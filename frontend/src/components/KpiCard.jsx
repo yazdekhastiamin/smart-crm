@@ -1,11 +1,16 @@
-export default function KpiCard({ icon: Icon, label, value, tone = "amber" }) {
+import Sparkline from "./Sparkline";
+
+export default function KpiCard({ icon: Icon, label, value, tone = "amber", trend, trendColor, featured = false }) {
   return (
-    <div className={`kpi-card kpi-tone-${tone}`}>
-      <div className="kpi-card-icon">
-        <Icon />
+    <div className={`kpi-card kpi-tone-${tone} ${featured ? "kpi-card--featured" : ""}`}>
+      <div className="kpi-card-top">
+        <div className="kpi-card-label">{label}</div>
+        <div className="kpi-card-icon">
+          <Icon />
+        </div>
       </div>
       <div className="kpi-card-value">{value}</div>
-      <div className="kpi-card-label">{label}</div>
+      <Sparkline data={trend} color={trendColor} />
     </div>
   );
 }

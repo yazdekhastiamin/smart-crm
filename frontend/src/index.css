@@ -27,9 +27,15 @@
 
   --tooltip-shadow: rgba(32, 36, 43, 0.12);
 
+  /* عمق کارت‌ها — border نیم‌شفاف + سایه‌ی نرم چندلایه به‌جای خط تخت. */
+  --card-bg: var(--surface);
+  --card-border: rgba(32, 36, 43, 0.09);
+  --card-shadow: 0 1px 2px rgba(32, 36, 43, 0.05), 0 16px 32px -20px rgba(32, 36, 43, 0.28);
+  --card-blur: none;
+
   --font-sans: "Estedad", Tahoma, sans-serif;
   --radius-sm: 6px;
-  --radius-md: 10px;
+  --radius-md: 12px;
   --radius-lg: 16px;
 }
 
@@ -59,6 +65,13 @@
      مستقل است (متن سفید رویش)، و tint از قبل برای نشستن روی پنل تیره طراحی
      شده بود — تم تیره‌شدنِ کل صفحه چیزی برایش عوض نمی‌کند. */
   --tooltip-shadow: rgba(0, 0, 0, 0.4);
+
+  /* افکت شیشه‌ای (glass): پس‌زمینه‌ی نیمه‌شفاف + blur، تا لایه‌بندی روی
+     گرادیان‌های محیطی پس‌زمینه (بالاتر تعریف‌شده) حس بشه. */
+  --card-bg: rgba(32, 36, 43, 0.6);
+  --card-border: rgba(255, 255, 255, 0.09);
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 20px 40px -20px rgba(0, 0, 0, 0.65);
+  --card-blur: blur(18px);
 }
 
 * {
@@ -70,6 +83,17 @@ body {
   font-family: var(--font-sans);
   background: var(--page);
   color: var(--ink);
+}
+
+/* گرادیان‌های محیطیِ خیلی کم‌رنگ پشت صفحه — بدون این‌ها، افکت شیشه‌ای
+   کارت‌ها روی یک پس‌زمینه‌ی تخت هیچ چیزی برای نشان‌دادن نداره. */
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(1100px 550px at 12% -8%, rgba(227, 167, 92, 0.09), transparent 60%),
+    radial-gradient(900px 500px at 92% 8%, rgba(31, 143, 114, 0.07), transparent 60%),
+    radial-gradient(800px 600px at 50% 110%, rgba(31, 82, 92, 0.12), transparent 60%),
+    var(--page);
+  background-attachment: fixed;
 }
 
 h1,
@@ -150,16 +174,26 @@ main {
 .kpi-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 1.35rem;
+  margin-bottom: 2rem;
 }
 
 .kpi-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  border: 1px solid var(--card-border);
   border-inline-start: 3px solid var(--kpi-accent, var(--amber));
   border-radius: var(--radius-md);
-  padding: 1.1rem 1.15rem;
+  box-shadow: var(--card-shadow);
+  padding: 1.4rem 1.5rem;
+}
+
+.kpi-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
 }
 
 .kpi-tone-amber {
@@ -180,21 +214,45 @@ main {
 
 .kpi-card-icon {
   color: var(--kpi-accent, var(--amber));
-  margin-bottom: 0.6rem;
-}
-
-.kpi-card-value {
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: var(--ink);
-  line-height: 1.2;
-  font-variant-numeric: proportional-nums;
+  opacity: 0.9;
+  flex: none;
 }
 
 .kpi-card-label {
   color: var(--ink-muted);
-  font-size: 0.8rem;
-  margin-top: 0.3rem;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.kpi-card-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.15;
+  font-variant-numeric: proportional-nums;
+}
+
+.kpi-sparkline {
+  height: 34px;
+  margin-top: 0.85rem;
+}
+
+/* --- کارت شاخص: تنها المان بصری «قوی» صفحه --- */
+
+.kpi-card--featured {
+  border-inline-start-width: 3px;
+  background:
+    radial-gradient(140% 140% at 15% 0%, rgba(189, 117, 38, 0.14), transparent 60%),
+    var(--card-bg);
+  box-shadow: 0 0 0 1px rgba(189, 117, 38, 0.16), 0 8px 28px -10px rgba(189, 117, 38, 0.35), var(--card-shadow);
+}
+
+:root[data-theme="dark"] .kpi-card--featured {
+  background:
+    radial-gradient(140% 140% at 15% 0%, rgba(227, 167, 92, 0.22), transparent 60%),
+    var(--card-bg);
+  box-shadow: 0 0 0 1px rgba(227, 167, 92, 0.25), 0 0 40px -6px rgba(227, 167, 92, 0.3), var(--card-shadow);
 }
 
 /* --- analytics grid: ۲×۲، نه پشت‌سرهم --- */
@@ -202,46 +260,81 @@ main {
 .analytics-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
   align-items: stretch;
 }
 
 .chart-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
-  padding: 1.25rem 1.5rem;
+  box-shadow: var(--card-shadow);
+  padding: 1.6rem 1.75rem;
 }
 
 .chart-card h3 {
-  margin: 0 0 1rem;
+  margin: 0 0 1.35rem;
   font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .trend-card-chart {
   height: 220px;
 }
 
+.donut-wrap {
+  position: relative;
+}
+
+.donut-center-label {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-center-value {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.1;
+  font-variant-numeric: proportional-nums;
+}
+
+.donut-center-caption {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  margin-top: 0.15rem;
+}
+
 /* --- alerts widget: calm, not a bright block --- */
 
 .alerts-widget {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  border: 1px solid var(--card-border);
   border-inline-end: 3px solid var(--status-critical);
   border-radius: var(--radius-md);
-  padding: 1.1rem 1.4rem;
+  box-shadow: var(--card-shadow);
+  padding: 1.6rem 1.75rem;
 }
 
 .alerts-widget-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  margin-bottom: 0.5rem;
 }
 
 .alerts-widget-header h3 {
   margin: 0;
   font-size: 0.95rem;
+  font-weight: 600;
   color: var(--ink);
 }
 
@@ -252,7 +345,7 @@ main {
 
 .alerts-list {
   list-style: none;
-  margin: 0.75rem 0 0;
+  margin: 0.85rem 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
