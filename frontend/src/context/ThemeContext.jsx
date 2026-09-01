@@ -3,12 +3,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 const STORAGE_KEY = "theme";
 const ThemeContext = createContext(null);
 
+// پیش‌فرض تیره (نه prefers-color-scheme سیستم) — برای حس حرفه‌ای‌تر داشبورد
+// آنالیتیکس؛ انتخاب دستی کاربر در localStorage همیشه از این پیش‌فرض برنده است.
 function readInitialTheme() {
   if (typeof document !== "undefined") {
     const attr = document.documentElement.getAttribute("data-theme");
     if (attr === "light" || attr === "dark") return attr;
   }
-  return "light";
+  return "dark";
 }
 
 export function ThemeProvider({ children }) {
@@ -17,18 +19,6 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
-
-  useEffect(() => {
-    // فقط تا وقتی کاربر انتخاب دستی نکرده، تغییر prefers-color-scheme سیستم را دنبال کن.
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    function handleChange(event) {
-      if (!localStorage.getItem(STORAGE_KEY)) {
-        setTheme(event.matches ? "dark" : "light");
-      }
-    }
-    media.addEventListener("change", handleChange);
-    return () => media.removeEventListener("change", handleChange);
-  }, []);
 
   function toggleTheme() {
     setTheme((prev) => {

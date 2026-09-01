@@ -134,12 +134,14 @@ async function recordSnapshot(totalForecast, openDealsCount) {
 export async function getPipelineForecast() {
   const deals = await recalculateOpenDealProbabilities();
   const totalForecast = deals.reduce((sum, deal) => sum + deal.value * deal.probability, 0);
+  const avgCycleDays = await getAverageCycleDays();
 
   await recordSnapshot(totalForecast, deals.length);
 
   return {
     totalForecast,
     openDealsCount: deals.length,
+    avgCycleDays,
     generatedAt: new Date().toISOString(),
   };
 }

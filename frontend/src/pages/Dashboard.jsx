@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
-import ForecastBanner from "../components/ForecastBanner";
+import KpiRow from "../components/KpiRow";
+import WinLossDonutChart from "../components/WinLossDonutChart";
+import ForecastTrendCard from "../components/ForecastTrendCard";
 import FollowUpAlerts from "../components/FollowUpAlerts";
 import StageDistributionChart from "../components/StageDistributionChart";
 import PipelineBoard from "../components/PipelineBoard";
@@ -21,9 +23,11 @@ export default function Dashboard() {
 
   return (
     <div>
-      <ForecastBanner refreshToken={refreshToken} />
+      <KpiRow refreshToken={refreshToken} />
 
-      <div className="dashboard-analytics-row">
+      <div className="analytics-grid">
+        <WinLossDonutChart refreshToken={refreshToken} />
+        <ForecastTrendCard refreshToken={refreshToken} />
         <StageDistributionChart refreshToken={refreshToken} />
         <FollowUpAlerts refreshToken={refreshToken} />
       </div>
@@ -35,19 +39,11 @@ export default function Dashboard() {
       <PipelineBoard refreshToken={refreshToken} onSelectDeal={setSelectedDealId} />
 
       {showNewDeal && (
-        <NewDealModal
-          stages={stages}
-          onClose={() => setShowNewDeal(false)}
-          onCreated={() => bump()}
-        />
+        <NewDealModal stages={stages} onClose={() => setShowNewDeal(false)} onCreated={() => bump()} />
       )}
 
       {selectedDealId && (
-        <DealDetailModal
-          dealId={selectedDealId}
-          onClose={() => setSelectedDealId(null)}
-          onChanged={bump}
-        />
+        <DealDetailModal dealId={selectedDealId} onClose={() => setSelectedDealId(null)} onChanged={bump} />
       )}
     </div>
   );

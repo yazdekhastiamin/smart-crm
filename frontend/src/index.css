@@ -144,50 +144,68 @@ main {
 }
 
 /* ==========================================================================
-   Hero — تنها المان بصری «قوی» صفحه
+   KPI row — ۵ عدد بزرگ که چشم رو فوراً جذب می‌کنن
    ========================================================================== */
 
-.forecast-hero {
-  background: linear-gradient(155deg, var(--teal) 0%, var(--teal-deep) 100%);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem 2rem;
-  margin-bottom: 1.5rem;
+.kpi-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  gap: 2rem;
-  align-items: center;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.forecast-hero-label {
-  color: var(--ink-on-dark-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-inline-start: 3px solid var(--kpi-accent, var(--amber));
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.15rem;
 }
 
-.forecast-hero-value {
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--amber-tint);
-  margin-top: 0.35rem;
-  line-height: 1.15;
+.kpi-tone-amber {
+  --kpi-accent: var(--amber);
+}
+.kpi-tone-teal {
+  --kpi-accent: var(--teal-ink);
+}
+.kpi-tone-good {
+  --kpi-accent: var(--status-good);
+}
+.kpi-tone-critical {
+  --kpi-accent: var(--status-critical);
+}
+.kpi-tone-neutral {
+  --kpi-accent: var(--ink-muted);
+}
+
+.kpi-card-icon {
+  color: var(--kpi-accent, var(--amber));
+  margin-bottom: 0.6rem;
+}
+
+.kpi-card-value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.2;
   font-variant-numeric: proportional-nums;
 }
 
-.forecast-hero-meta {
-  color: var(--ink-on-dark-secondary);
-  font-size: 0.85rem;
-  margin-top: 0.4rem;
+.kpi-card-label {
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
 }
 
-.forecast-hero-chart {
-  height: 110px;
-}
+/* --- analytics grid: ۲×۲، نه پشت‌سرهم --- */
 
-.forecast-hero-error {
-  color: var(--amber-tint);
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  align-items: stretch;
 }
-
-/* --- stage distribution card --- */
 
 .chart-card {
   background: var(--surface);
@@ -201,12 +219,8 @@ main {
   font-size: 0.95rem;
 }
 
-.dashboard-analytics-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
-  align-items: stretch;
+.trend-card-chart {
+  height: 220px;
 }
 
 /* --- alerts widget: calm, not a bright block --- */
@@ -702,11 +716,14 @@ textarea:focus {
   font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 860px) {
-  .forecast-hero {
-    grid-template-columns: 1fr;
+@media (max-width: 1080px) {
+  .kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .dashboard-analytics-row {
+}
+
+@media (max-width: 860px) {
+  .analytics-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -12,14 +12,14 @@ const DEMO_SOURCE = "demo-pipeline-seed";
 // { stageName, customer, city, value, ageDays, daysSinceActivity }
 // daysSinceActivity=null یعنی از ابتدا هیچ تعاملی ثبت نشده (fallback به createdAt).
 const DEALS = [
-  { stage: "سرنخ", customer: "پارسا اتوسرویس", city: "تهران", value: 60000000, ageDays: 5, daysSinceActivity: 1 },
-  { stage: "سرنخ", customer: "نگین تعمیرگاه", city: "کرج", value: 40000000, ageDays: 20, daysSinceActivity: 15 },
-  { stage: "مذاکره", customer: "پارس گروه تعمیرگاهی", city: "اصفهان", value: 180000000, ageDays: 15, daysSinceActivity: 2 },
-  { stage: "مذاکره", customer: "کوروش نمایندگی خودرو", city: "کرج", value: 220000000, ageDays: 40, daysSinceActivity: 25 },
-  { stage: "پیش‌فاکتور ارسال‌شده", customer: "سورن پخش قطعات", city: "شیراز", value: 150000000, ageDays: 25, daysSinceActivity: 3 },
-  { stage: "پیش‌فاکتور ارسال‌شده", customer: "دنا گروه تعمیرگاهی", city: "تبریز", value: 260000000, ageDays: 55, daysSinceActivity: 20 },
-  { stage: "چانه‌زنی نهایی", customer: "فردا نمایندگی خودرو", city: "تهران", value: 320000000, ageDays: 20, daysSinceActivity: 1 },
-  { stage: "چانه‌زنی نهایی", customer: "ایمان حمل و نقل", city: "مشهد", value: 400000000, ageDays: 90, daysSinceActivity: null },
+  { stage: "سرنخ", customer: "پارسا توزیع", city: "تهران", value: 60000000, ageDays: 5, daysSinceActivity: 1 },
+  { stage: "سرنخ", customer: "نگین تجهیزات", city: "کرج", value: 40000000, ageDays: 20, daysSinceActivity: 15 },
+  { stage: "مذاکره", customer: "پارس گروه صنعتی", city: "اصفهان", value: 180000000, ageDays: 15, daysSinceActivity: 2 },
+  { stage: "مذاکره", customer: "کوروش فروشگاه‌های زنجیره‌ای", city: "کرج", value: 220000000, ageDays: 40, daysSinceActivity: 25 },
+  { stage: "پیش‌فاکتور ارسال‌شده", customer: "سورن پخش", city: "شیراز", value: 150000000, ageDays: 25, daysSinceActivity: 3 },
+  { stage: "پیش‌فاکتور ارسال‌شده", customer: "دنا گروه بازرگانی", city: "تبریز", value: 260000000, ageDays: 55, daysSinceActivity: 20 },
+  { stage: "چانه‌زنی نهایی", customer: "فردا تجهیزات تخصصی", city: "تهران", value: 320000000, ageDays: 20, daysSinceActivity: 1 },
+  { stage: "چانه‌زنی نهایی", customer: "ایمان لجستیک", city: "مشهد", value: 400000000, ageDays: 90, daysSinceActivity: null },
 ];
 
 async function main() {
