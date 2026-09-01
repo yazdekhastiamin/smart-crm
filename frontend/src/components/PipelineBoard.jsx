@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import DealCard from "./DealCard";
 import { formatToman } from "../utils/format";
+import { STAGE_RAMP } from "../utils/theme";
 
 export default function PipelineBoard({ refreshToken, onSelectDeal }) {
   const [stages, setStages] = useState([]);
@@ -26,13 +27,16 @@ export default function PipelineBoard({ refreshToken, onSelectDeal }) {
 
   return (
     <div className="pipeline-board">
-      {openStages.map((stage) => {
+      {openStages.map((stage, index) => {
         const stageDeals = deals.filter((deal) => deal.stageId === stage.id);
         const stageTotal = stageDeals.reduce((sum, deal) => sum + deal.value, 0);
 
         return (
           <div className="pipeline-column" key={stage.id}>
-            <div className="pipeline-column-header">
+            <div
+              className="pipeline-column-header"
+              style={{ borderTopColor: STAGE_RAMP[index % STAGE_RAMP.length] }}
+            >
               <h3>{stage.name}</h3>
               <span className="pipeline-column-meta">
                 {stageDeals.length} فرصت — {formatToman(stageTotal)}

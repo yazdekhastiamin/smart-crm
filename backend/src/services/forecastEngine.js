@@ -114,15 +114,42 @@ export async function recalculateOpenDealProbabilities() {
   return updated;
 }
 
+function startOfDay(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+async function recordSnapshot(totalForecast, openDealsCount) {
+  const date = startOfDay(new Date());
+  await prisma.forecastSnapshot.upsert({
+    where: { date },
+    update: { totalForecast, openDealsCount },
+    create: { date, totalForecast, openDealsCount },
+  });
+}
+
 // پیش‌بینی کل قیف = مجموع (ارزش × احتمال) همه‌ی معاملات باز (بخش ۳.۱ SPEC).
 // قبل از جمع زدن، احتمال هر معامله را تازه می‌کند تا عدد همیشه به‌روز باشد.
 export async function getPipelineForecast() {
   const deals = await recalculateOpenDealProbabilities();
   const totalForecast = deals.reduce((sum, deal) => sum + deal.value * deal.probability, 0);
 
+  await recordSnapshot(totalForecast, deals.length);
+
   return {
     totalForecast,
     openDealsCount: deals.length,
     generatedAt: new Date().toISOString(),
   };
+}
+
+export async function getForecastHistory(days = 30) {
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+
+  return prisma.forecastSnapshot.findMany({
+    where: { date: { gte: startOfDay(since) } },
+    orderBy: { date: "asc" },
+  });
 }

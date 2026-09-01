@@ -14,8 +14,8 @@ export default defineConfig({
         description: "مینی ERP فروش و CRM برای کسب‌وکارهای کوچک",
         lang: "fa",
         dir: "rtl",
-        theme_color: "#1f2937",
-        background_color: "#ffffff",
+        theme_color: "#1C4A52",
+        background_color: "#F1F2F4",
         display: "standalone",
         start_url: "/",
         icons: [

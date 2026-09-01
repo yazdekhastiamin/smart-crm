@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import ForecastBanner from "../components/ForecastBanner";
 import FollowUpAlerts from "../components/FollowUpAlerts";
+import StageDistributionChart from "../components/StageDistributionChart";
 import PipelineBoard from "../components/PipelineBoard";
 import NewDealModal from "../components/NewDealModal";
 import DealDetailModal from "../components/DealDetailModal";
@@ -21,7 +22,11 @@ export default function Dashboard() {
   return (
     <div>
       <ForecastBanner refreshToken={refreshToken} />
-      <FollowUpAlerts refreshToken={refreshToken} />
+
+      <div className="dashboard-analytics-row">
+        <StageDistributionChart refreshToken={refreshToken} />
+        <FollowUpAlerts refreshToken={refreshToken} />
+      </div>
 
       <div className="page-header">
         <h2>قیف فروش</h2>

@@ -44,6 +44,7 @@ export const api = {
   },
   forecast: {
     get: () => request("/forecast"),
+    history: () => request("/forecast/history"),
   },
   alerts: {
     list: () => request("/alerts"),

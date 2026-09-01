@@ -97,3 +97,14 @@ model Activity {
   ownerId Int?
   owner   User? @relation(fields: [ownerId], references: [id])
 }
+
+// یک نقطه‌ی روزانه از «پیش‌بینی کل قیف» — برای نمودار روند در داشبورد.
+// هر بار forecastEngine محاسبه می‌شود، رکورد همان روز به‌روزرسانی می‌شود
+// (نه یک ردیف جدید)، تا نمودار حداکثر یک نقطه در روز داشته باشد.
+model ForecastSnapshot {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @unique // نیمه‌شب همان روز (کلید یکتایی روزانه)
+  totalForecast   Float
+  openDealsCount  Int
+  createdAt       DateTime @default(now())
+}

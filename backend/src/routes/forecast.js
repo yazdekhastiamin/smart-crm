@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { getForecast } from "../controllers/forecastController.js";
+import { getForecast, getHistory } from "../controllers/forecastController.js";
 
 const router = Router();
 
 router.get("/", getForecast);
+router.get("/history", getHistory);
 
 export default router;
