@@ -1,5 +1,8 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
 import contactsRouter from "./routes/contacts.js";
 import dealsRouter from "./routes/deals.js";
@@ -26,6 +29,20 @@ app.use("/api/forecast", forecastRouter);
 app.use("/api/alerts", alertsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/analytics", analyticsRouter);
+
+// روی Railway فرانت‌اند به‌صورت static build از همین سرویس بک‌اند سرو می‌شود
+// (یک origin و یک لینک واحد). اگر build فرانت‌اند وجود نداشته باشد (مثلاً در
+// حالت توسعه‌ی محلی که فرانت‌اند جدا با vite dev اجرا می‌شود)، این بخش نادیده
+// گرفته می‌شود و رفتار قبلی (فقط API) حفظ می‌شود.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const frontendDist = path.resolve(__dirname, "../../frontend/dist");
+
+if (fs.existsSync(path.join(frontendDist, "index.html"))) {
+  app.use(express.static(frontendDist));
+  app.get(/^(?!\/api\/).*/, (req, res) => {
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+}
 
 app.use(notFoundHandler);
 app.use(errorHandler);

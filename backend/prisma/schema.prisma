@@ -1,10 +1,7 @@
-// Local demo uses SQLite (zero setup, single file, easy to reset/seed).
-// To move to Postgres for real deployment later: change provider to
-// "postgresql", point DATABASE_URL at the Postgres instance, and switch
-// `value`/`probability` fields below from Float to Decimal — everything
-// else (models, relations, client API) stays the same.
+// Production deployment uses Postgres (Railway). DATABASE_URL is always
+// read from the environment — never hardcoded here.
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -55,7 +52,7 @@ model PipelineStage {
 model Deal {
   id                Int           @id @default(autoincrement())
   title             String
-  value             Float // ارزش ریالی
+  value             Decimal       @db.Decimal(14, 2) // ارزش ریالی — Decimal برای دقت مالی؛ توسط src/config/prisma.js به Number تبدیل می‌شود
   itemDescription   String? // شرح کالا/خدمت — برای خروجی پیش‌فاکتور (لایه اتصال مالی، بخش SPEC)
   probability       Float         @default(0) // خروجی پایدارشده‌ی forecastEngine؛ برای معاملات بسته یعنی ۱ (برد) یا ۰ (باخت)
   previousProbability Float? // مقدار probability درست قبل از آخرین محاسبه — برای تشخیص افت در alertEngine
@@ -105,7 +102,7 @@ model Activity {
 model ForecastSnapshot {
   id             Int      @id @default(autoincrement())
   date           DateTime @unique // نیمه‌شب همان روز (کلید یکتایی روزانه)
-  totalForecast  Float
+  totalForecast  Decimal  @db.Decimal(16, 2) // مجموع (ارزش × احتمال) — Decimal برای دقت مالی؛ توسط src/config/prisma.js به Number تبدیل می‌شود
   openDealsCount Int
   // برای اسپارک‌لاین کارت‌های KPI — هر سه از تاریخچه‌ی واقعی معاملات
   // بازسازی می‌شوند (createdAt/updatedAt واقعی)، نه عدد ساختگی.
