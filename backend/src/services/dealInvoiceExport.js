@@ -16,6 +16,7 @@ const COLUMNS = [
   { key: "contact", width: 26 },
   { key: "itemDescription", width: 36 },
   { key: "amount", width: 18 },
+  { key: "systemDate", width: 14 },
 ];
 
 const HEADERS = {
@@ -27,6 +28,7 @@ const HEADERS = {
   contact: "تماس (تلفن/ایمیل)",
   itemDescription: "شرح کالا/خدمت",
   amount: "مبلغ (تومان)",
+  systemDate: "تاریخ سیستمی",
 };
 
 // خروجی استاندارد و عمومی (نه مخصوص یک نرم‌افزار مالی خاص) برای import دستی
@@ -58,22 +60,27 @@ export async function buildDealInvoiceWorkbook(deal) {
   const today = new Date();
   const issueDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
+  // دو ستون تاریخ برای دو نیاز متفاوت:
+  // - «تاریخ» رشته‌ی متنی شمسی (fa-IR) برای خوانایی مشتری ایرانی.
+  // - «تاریخ سیستمی» سلول تاریخ واقعی اکسل (میلادی) در انتها، برای
+  //   مرتب‌سازی/فیلتر/محاسبه در اکسل یا سیستم‌های دیگر — تقویم جلالی در
+  //   فرمت سلول اکسل قابل اعتماد نیست (فقط در ویندوز/با تنظیم منطقه‌ای خاص
+  //   کار می‌کند)، پس برای این ستون میلادی نگه داشته شده.
+  const jalaliDateText = issueDate.toLocaleDateString("fa-IR");
+
   const dataRow = sheet.addRow({
     invoiceNumber: invoiceNumberFor(deal.id),
-    date: issueDate,
+    date: jalaliDateText,
     contactName: contact.name || "",
     company: contact.company || "",
     city: contact.city || "",
     contact: contactInfo,
     itemDescription: deal.itemDescription || deal.title || "",
     amount: deal.value,
+    systemDate: issueDate,
   });
-  // سلول تاریخ به‌عنوان یک تاریخ واقعی اکسل (نه رشته) نوشته می‌شود تا در
-  // اکسل قابل مرتب‌سازی/فیلتر باشد. تقویم جلالی در فرمت سلول اکسل قابل
-  // اعتماد نیست (فقط در ویندوز/با تنظیم منطقه‌ای خاص کار می‌کند و در
-  // لیبره‌آفیس/گوگل‌شیت/مک نمایش درستی ندارد)، پس چون این یک سند داخلی است
-  // میلادی نگه داشته شده.
-  dataRow.getCell("date").numFmt = "yyyy-mm-dd";
+  dataRow.getCell("date").alignment = { horizontal: "center" };
+  dataRow.getCell("systemDate").numFmt = "yyyy-mm-dd";
   dataRow.getCell("amount").numFmt = "#,##0";
 
   return workbook;
