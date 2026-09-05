@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma.js";
 import { recalculateDealProbability } from "../services/forecastEngine.js";
+import { buildDealInvoiceWorkbook, invoiceFileName } from "../services/dealInvoiceExport.js";
 
 export async function listDeals(req, res, next) {
   try {
@@ -33,8 +34,18 @@ export async function getDeal(req, res, next) {
 
 export async function createDeal(req, res, next) {
   try {
-    const { title, value, contactId, stageId, ownerId, source, industry, companySize, expectedCloseDate } =
-      req.body;
+    const {
+      title,
+      value,
+      contactId,
+      stageId,
+      ownerId,
+      source,
+      industry,
+      companySize,
+      expectedCloseDate,
+      itemDescription,
+    } = req.body;
     const deal = await prisma.deal.create({
       data: {
         title,
@@ -46,6 +57,7 @@ export async function createDeal(req, res, next) {
         industry,
         companySize,
         expectedCloseDate: expectedCloseDate ? new Date(expectedCloseDate) : undefined,
+        itemDescription,
       },
     });
     // probability را همان لحظه بر اساس مرحله و سیگنال‌ها محاسبه و ذخیره می‌کند.
@@ -99,7 +111,8 @@ export async function updateDeal(req, res, next) {
     // می‌شوند، نه این endpoint — تا با آن منطق ناسازگار نشوند. با این حال
     // چون سن معامله (که در محاسبه‌ی probability اثر دارد) با گذر زمان تغییر
     // می‌کند، بعد از هر ویرایش probability دوباره محاسبه می‌شود.
-    const { title, value, ownerId, source, industry, companySize, expectedCloseDate } = req.body;
+    const { title, value, ownerId, source, industry, companySize, expectedCloseDate, itemDescription } =
+      req.body;
     const dealId = Number(req.params.id);
     await prisma.deal.update({
       where: { id: dealId },
@@ -111,11 +124,41 @@ export async function updateDeal(req, res, next) {
         industry,
         companySize,
         expectedCloseDate: expectedCloseDate ? new Date(expectedCloseDate) : undefined,
+        itemDescription,
       },
     });
 
     const deal = await recalculateDealProbability(dealId);
     res.json(deal);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// خروجی پیش‌فاکتور Excel برای یک Deal مشخص — لایه اتصال مالی (بخش SPEC)،
+// فرمت ساده و عمومی برای import دستی به هر نرم‌افزار مالی.
+export async function exportDealInvoice(req, res, next) {
+  try {
+    const deal = await prisma.deal.findUnique({
+      where: { id: Number(req.params.id) },
+      include: { contact: true },
+    });
+    if (!deal) return res.status(404).json({ error: "Deal not found" });
+
+    const workbook = await buildDealInvoiceWorkbook(deal);
+    const fileName = invoiceFileName(deal.id);
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="invoice-${deal.id}.xlsx"; filename*=UTF-8''${encodeURIComponent(fileName)}`
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
   } catch (err) {
     next(err);
   }

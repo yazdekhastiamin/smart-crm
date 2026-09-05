@@ -13,6 +13,7 @@ export default function NewDealModal({ stages, onClose, onCreated }) {
   const [stageId, setStageId] = useState(openStages[0]?.id ?? "");
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
+  const [itemDescription, setItemDescription] = useState("");
 
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -48,6 +49,7 @@ export default function NewDealModal({ stages, onClose, onCreated }) {
         value: Number(value),
         contactId: resolvedContactId,
         stageId,
+        itemDescription: itemDescription.trim() || undefined,
       });
       onCreated(deal);
       onClose();
@@ -111,6 +113,14 @@ export default function NewDealModal({ stages, onClose, onCreated }) {
           <label className="form-grid-full">
             عنوان (اختیاری)
             <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="فروش به ..." />
+          </label>
+          <label className="form-grid-full">
+            شرح کالا/خدمت (اختیاری)
+            <input
+              value={itemDescription}
+              onChange={(e) => setItemDescription(e.target.value)}
+              placeholder="برای درج در پیش‌فاکتور..."
+            />
           </label>
         </div>
 

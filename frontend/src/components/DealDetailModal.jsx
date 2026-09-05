@@ -44,6 +44,7 @@ export default function DealDetailModal({ dealId, onClose, onChanged }) {
           stageId: loadedDeal.stageId,
           expectedCloseDate: toDateInputValue(loadedDeal.expectedCloseDate),
           ownerId: loadedDeal.ownerId ?? "",
+          itemDescription: loadedDeal.itemDescription ?? "",
         });
         setContactForm({ ...loadedDeal.contact });
       })
@@ -67,6 +68,7 @@ export default function DealDetailModal({ dealId, onClose, onChanged }) {
         value: Number(form.value),
         ownerId: form.ownerId === "" ? null : Number(form.ownerId),
         expectedCloseDate: form.expectedCloseDate || null,
+        itemDescription: form.itemDescription.trim() || null,
       });
       await refetchDeal();
       onChanged();
@@ -168,13 +170,27 @@ export default function DealDetailModal({ dealId, onClose, onChanged }) {
                 ))}
               </select>
             </label>
+            <label className="form-grid-full">
+              شرح کالا/خدمت
+              <textarea
+                value={form.itemDescription}
+                onChange={(e) => setForm({ ...form, itemDescription: e.target.value })}
+                rows={2}
+                placeholder="شرح کالا یا خدمتی که در پیش‌فاکتور درج می‌شود..."
+              />
+            </label>
             <div className="form-grid-full form-actions form-actions-between">
               <span className="deal-detail-probability">
                 احتمال فعلی: <strong>{formatPercent(deal.probability)}</strong>
               </span>
-              <button type="submit" disabled={saving}>
-                {saving ? "در حال ذخیره..." : "ذخیره تغییرات"}
-              </button>
+              <div className="form-actions-group">
+                <a className="button-secondary" href={`/api/deals/${dealId}/export`} download>
+                  خروجی پیش‌فاکتور
+                </a>
+                <button type="submit" disabled={saving}>
+                  {saving ? "در حال ذخیره..." : "ذخیره تغییرات"}
+                </button>
+              </div>
             </div>
           </form>
         </section>
