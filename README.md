@@ -27,6 +27,7 @@ npm install
 npm run dev               # http://localhost:5173 (پروکسی /api به بک‌اند)
 ```
 
-## دیپلوی روی Railway
+## دیپلوی
 
-راهنمای کامل قدم‌به‌قدم در [DEPLOY.md](./DEPLOY.md).
+- **لیارا (Liara.ir)** — راهنمای کامل قدم‌به‌قدم در [DEPLOY_LIARA.md](./DEPLOY_LIARA.md).
+- **Railway** — راهنمای کامل قدم‌به‌قدم در [DEPLOY.md](./DEPLOY.md).

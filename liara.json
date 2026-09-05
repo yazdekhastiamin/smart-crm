@@ -1,0 +1,13 @@
+{
+  "port": 4000,
+  "node": {
+    "version": "20"
+  },
+  "healthCheck": {
+    "command": "CMD curl --fail http://localhost:4000/api/health || exit 1",
+    "interval": 30,
+    "timeout": 15,
+    "retries": 2,
+    "startPeriod": 10
+  }
+}
