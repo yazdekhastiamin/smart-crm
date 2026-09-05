@@ -23,6 +23,7 @@ export const api = {
   },
   deals: {
     list: () => request("/deals"),
+    priority: () => request("/deals/priority"),
     get: (id) => request(`/deals/${id}`),
     create: (data) => request("/deals", { method: "POST", body: JSON.stringify(data) }),
     update: (id, data) => request(`/deals/${id}`, { method: "PUT", body: JSON.stringify(data) }),

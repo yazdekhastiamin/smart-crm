@@ -1,6 +1,17 @@
 import { prisma } from "../config/prisma.js";
 import { recalculateDealProbability } from "../services/forecastEngine.js";
+import { getDealPriorityRanking } from "../services/priorityEngine.js";
 import { buildDealInvoiceWorkbook, invoiceFileName } from "../services/dealInvoiceExport.js";
+
+// رتبه‌بندی فرصت‌های باز برای «کدام لید را الان پیگیری کنم؟» (بخش ۳.۳ SPEC).
+export async function getDealPriority(req, res, next) {
+  try {
+    const ranking = await getDealPriorityRanking();
+    res.json(ranking);
+  } catch (err) {
+    next(err);
+  }
+}
 
 export async function listDeals(req, res, next) {
   try {

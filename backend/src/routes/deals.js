@@ -7,11 +7,13 @@ import {
   updateDealStage,
   exportDealInvoice,
   deleteDeal,
+  getDealPriority,
 } from "../controllers/dealController.js";
 
 const router = Router();
 
 router.get("/", listDeals);
+router.get("/priority", getDealPriority);
 router.get("/:id", getDeal);
 router.get("/:id/export", exportDealInvoice);
 router.post("/", createDeal);

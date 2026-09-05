@@ -10,17 +10,19 @@ const DAY = 86400000;
 
 const DEMO_SOURCE = "demo-pipeline-seed";
 
-// { stageName, customer, city, value, ageDays, daysSinceActivity }
+// { stageName, customer, city, value, ageDays, daysSinceActivity, industry }
 // daysSinceActivity=null یعنی از ابتدا هیچ تعاملی ثبت نشده (fallback به createdAt).
+// industry از همان بخش‌های دیتاست تاریخی ۳۰ رکوردی (sample_deals_30.xlsx) است
+// تا اولویت‌بندی لیدها (بخش ۳.۳ SPEC) بتواند نرخ برد واقعی هر بخش را تطبیق دهد.
 const DEALS = [
-  { stage: "سرنخ", customer: "پارسا توزیع", city: "تهران", value: 60000000, ageDays: 5, daysSinceActivity: 1 },
-  { stage: "سرنخ", customer: "نگین تجهیزات", city: "کرج", value: 40000000, ageDays: 20, daysSinceActivity: 15 },
-  { stage: "مذاکره", customer: "پارس گروه صنعتی", city: "اصفهان", value: 180000000, ageDays: 15, daysSinceActivity: 2 },
-  { stage: "مذاکره", customer: "کوروش فروشگاه‌های زنجیره‌ای", city: "کرج", value: 220000000, ageDays: 40, daysSinceActivity: 25 },
-  { stage: "پیش‌فاکتور ارسال‌شده", customer: "سورن پخش", city: "شیراز", value: 150000000, ageDays: 25, daysSinceActivity: 3 },
-  { stage: "پیش‌فاکتور ارسال‌شده", customer: "دنا گروه بازرگانی", city: "تبریز", value: 260000000, ageDays: 55, daysSinceActivity: 20 },
-  { stage: "چانه‌زنی نهایی", customer: "فردا تجهیزات تخصصی", city: "تهران", value: 320000000, ageDays: 20, daysSinceActivity: 1 },
-  { stage: "چانه‌زنی نهایی", customer: "ایمان لجستیک", city: "مشهد", value: 400000000, ageDays: 90, daysSinceActivity: null },
+  { stage: "سرنخ", customer: "پارسا توزیع", city: "تهران", value: 60000000, ageDays: 5, daysSinceActivity: 1, industry: "توزیع‌کننده منطقه‌ای" },
+  { stage: "سرنخ", customer: "نگین تجهیزات", city: "کرج", value: 40000000, ageDays: 20, daysSinceActivity: 15, industry: "خریدار صنعتی/شرکتی" },
+  { stage: "مذاکره", customer: "پارس گروه صنعتی", city: "اصفهان", value: 180000000, ageDays: 15, daysSinceActivity: 2, industry: "خریدار صنعتی/شرکتی" },
+  { stage: "مذاکره", customer: "کوروش فروشگاه‌های زنجیره‌ای", city: "کرج", value: 220000000, ageDays: 40, daysSinceActivity: 25, industry: "فروشگاه زنجیره‌ای بزرگ" },
+  { stage: "پیش‌فاکتور ارسال‌شده", customer: "سورن پخش", city: "شیراز", value: 150000000, ageDays: 25, daysSinceActivity: 3, industry: "توزیع‌کننده منطقه‌ای" },
+  { stage: "پیش‌فاکتور ارسال‌شده", customer: "دنا گروه بازرگانی", city: "تبریز", value: 260000000, ageDays: 55, daysSinceActivity: 20, industry: "نماینده رسمی برند" },
+  { stage: "چانه‌زنی نهایی", customer: "فردا تجهیزات تخصصی", city: "تهران", value: 320000000, ageDays: 20, daysSinceActivity: 1, industry: "پیمانکار مستقل متوسط" },
+  { stage: "چانه‌زنی نهایی", customer: "ایمان لجستیک", city: "مشهد", value: 400000000, ageDays: 90, daysSinceActivity: null, industry: "پیمانکار مستقل کوچک" },
 ];
 
 async function main() {
@@ -53,6 +55,7 @@ async function main() {
         stageId: stage.id,
         ownerId: owner?.id,
         source: DEMO_SOURCE,
+        industry: item.industry,
         createdAt,
         stageEnteredAt: createdAt,
       },
