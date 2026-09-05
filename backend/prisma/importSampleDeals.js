@@ -8,6 +8,7 @@
 import path from "node:path";
 import ExcelJS from "exceljs";
 import { PrismaClient } from "@prisma/client";
+import { samplePhoneFor } from "./seedHelpers.js";
 
 const prisma = new PrismaClient();
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -58,9 +59,15 @@ async function getOrCreateRep(name) {
 
 async function getOrCreateContact({ customerName, industry, city }) {
   const existing = await prisma.contact.findFirst({ where: { name: customerName } });
-  if (existing) return existing;
+  if (existing) {
+    if (existing.phone) return existing;
+    return prisma.contact.update({
+      where: { id: existing.id },
+      data: { phone: samplePhoneFor(customerName) },
+    });
+  }
   return prisma.contact.create({
-    data: { name: customerName, company: customerName, position: industry, city },
+    data: { name: customerName, company: customerName, position: industry, city, phone: samplePhoneFor(customerName) },
   });
 }
 

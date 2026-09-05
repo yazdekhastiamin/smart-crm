@@ -1,10 +1,33 @@
 import ExcelJS from "exceljs";
+import { COMPANY_NAME } from "../config/company.js";
 
 // شماره‌ی پیش‌فاکتور: چون هر Deal دقیقاً یک پیش‌فاکتور دارد، از همان id
 // ترتیبی و یکتای Deal استفاده می‌شود — بدون نیاز به شمارنده‌ی جداگانه.
 function invoiceNumberFor(dealId) {
   return `PF-${String(dealId).padStart(6, "0")}`;
 }
+
+const COLUMNS = [
+  { key: "invoiceNumber", width: 18 },
+  { key: "date", width: 14 },
+  { key: "contactName", width: 22 },
+  { key: "company", width: 24 },
+  { key: "city", width: 14 },
+  { key: "contact", width: 26 },
+  { key: "itemDescription", width: 36 },
+  { key: "amount", width: 18 },
+];
+
+const HEADERS = {
+  invoiceNumber: "شماره پیش‌فاکتور",
+  date: "تاریخ",
+  contactName: "نام مشتری",
+  company: "نام شرکت",
+  city: "شهر",
+  contact: "تماس (تلفن/ایمیل)",
+  itemDescription: "شرح کالا/خدمت",
+  amount: "مبلغ (تومان)",
+};
 
 // خروجی استاندارد و عمومی (نه مخصوص یک نرم‌افزار مالی خاص) برای import دستی
 // به نرم‌افزار مالی موجود مشتری — بخش «لایه اتصال مالی» SPEC.
@@ -17,24 +40,27 @@ export async function buildDealInvoiceWorkbook(deal) {
     views: [{ rightToLeft: true }],
   });
 
-  sheet.columns = [
-    { header: "شماره پیش‌فاکتور", key: "invoiceNumber", width: 18 },
-    { header: "تاریخ", key: "date", width: 14 },
-    { header: "نام مشتری", key: "contactName", width: 22 },
-    { header: "نام شرکت", key: "company", width: 24 },
-    { header: "شهر", key: "city", width: 14 },
-    { header: "تماس (تلفن/ایمیل)", key: "contact", width: 26 },
-    { header: "شرح کالا/خدمت", key: "itemDescription", width: 36 },
-    { header: "مبلغ (تومان)", key: "amount", width: 18 },
-  ];
-  sheet.getRow(1).font = { bold: true };
+  // بدون `header` روی تعریف ستون‌ها تا ExcelJS خودکار یک ردیف هدر نسازد —
+  // چون قبل از آن یک ردیف با نام شرکت فروشنده لازم داریم.
+  sheet.columns = COLUMNS;
+
+  const companyRow = sheet.addRow([COMPANY_NAME]);
+  sheet.mergeCells(companyRow.number, 1, companyRow.number, COLUMNS.length);
+  companyRow.font = { bold: true, size: 13 };
+  companyRow.alignment = { horizontal: "center" };
+
+  const headerRow = sheet.addRow(HEADERS);
+  headerRow.font = { bold: true };
 
   const contact = deal.contact || {};
   const contactInfo = [contact.phone, contact.email].filter(Boolean).join(" / ");
 
-  sheet.addRow({
+  const today = new Date();
+  const issueDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  const dataRow = sheet.addRow({
     invoiceNumber: invoiceNumberFor(deal.id),
-    date: new Date().toLocaleDateString("fa-IR"),
+    date: issueDate,
     contactName: contact.name || "",
     company: contact.company || "",
     city: contact.city || "",
@@ -42,8 +68,13 @@ export async function buildDealInvoiceWorkbook(deal) {
     itemDescription: deal.itemDescription || deal.title || "",
     amount: deal.value,
   });
-
-  sheet.getColumn("amount").numFmt = "#,##0";
+  // سلول تاریخ به‌عنوان یک تاریخ واقعی اکسل (نه رشته) نوشته می‌شود تا در
+  // اکسل قابل مرتب‌سازی/فیلتر باشد. تقویم جلالی در فرمت سلول اکسل قابل
+  // اعتماد نیست (فقط در ویندوز/با تنظیم منطقه‌ای خاص کار می‌کند و در
+  // لیبره‌آفیس/گوگل‌شیت/مک نمایش درستی ندارد)، پس چون این یک سند داخلی است
+  // میلادی نگه داشته شده.
+  dataRow.getCell("date").numFmt = "yyyy-mm-dd";
+  dataRow.getCell("amount").numFmt = "#,##0";
 
   return workbook;
 }

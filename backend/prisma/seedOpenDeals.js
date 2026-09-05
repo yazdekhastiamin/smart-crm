@@ -3,6 +3,7 @@
 // Idempotent: قبل از ساخت دوباره، فقط dealهای باز با همین علامت را پاک می‌کند.
 
 import { PrismaClient } from "@prisma/client";
+import { samplePhoneFor } from "./seedHelpers.js";
 
 const prisma = new PrismaClient();
 const DAY = 86400000;
@@ -34,7 +35,12 @@ async function main() {
     let contact = await prisma.contact.findFirst({ where: { name: item.customer } });
     if (!contact) {
       contact = await prisma.contact.create({
-        data: { name: item.customer, company: item.customer, city: item.city },
+        data: { name: item.customer, company: item.customer, city: item.city, phone: samplePhoneFor(item.customer) },
+      });
+    } else if (!contact.phone) {
+      contact = await prisma.contact.update({
+        where: { id: contact.id },
+        data: { phone: samplePhoneFor(item.customer) },
       });
     }
 
