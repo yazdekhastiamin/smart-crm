@@ -12,6 +12,7 @@ import forecastRouter from "./routes/forecast.js";
 import alertsRouter from "./routes/alerts.js";
 import usersRouter from "./routes/users.js";
 import analyticsRouter from "./routes/analytics.js";
+import adminRouter from "./routes/admin.js";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler.js";
 
 export const app = express();
@@ -29,6 +30,7 @@ app.use("/api/forecast", forecastRouter);
 app.use("/api/alerts", alertsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/analytics", analyticsRouter);
+app.use("/api/admin", adminRouter);
 
 // روی Railway فرانت‌اند به‌صورت static build از همین سرویس بک‌اند سرو می‌شود
 // (یک origin و یک لینک واحد). اگر build فرانت‌اند وجود نداشته باشد (مثلاً در
