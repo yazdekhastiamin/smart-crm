@@ -5,6 +5,7 @@ import WinLossDonutChart from "../components/WinLossDonutChart";
 import ForecastTrendCard from "../components/ForecastTrendCard";
 import FollowUpAlerts from "../components/FollowUpAlerts";
 import PriorityDeals from "../components/PriorityDeals";
+import WinPatternsCard from "../components/WinPatternsCard";
 import StageDistributionChart from "../components/StageDistributionChart";
 import PipelineBoard from "../components/PipelineBoard";
 import NewDealModal from "../components/NewDealModal";
@@ -31,6 +32,7 @@ export default function Dashboard() {
         <ForecastTrendCard refreshToken={refreshToken} />
         <StageDistributionChart refreshToken={refreshToken} />
         <FollowUpAlerts refreshToken={refreshToken} />
+        <WinPatternsCard refreshToken={refreshToken} />
         <PriorityDeals refreshToken={refreshToken} />
       </div>
 

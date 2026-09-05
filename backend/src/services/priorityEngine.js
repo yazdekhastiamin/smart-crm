@@ -32,7 +32,9 @@ function formatCompactToman(value) {
 
 // نرخ برد هر بخش/نوع کسب‌وکار از معاملات بسته‌شده‌ی تاریخی (برد و باخت)،
 // به‌علاوه‌ی نرخ برد کلی به‌عنوان baseline برای بخش‌هایی که داده‌ی کافی ندارند.
-async function getIndustryWinRates() {
+// export شده چون winPatternAnalysis.js (بخش ۳.۴ SPEC) هم همین محاسبه را
+// برای نمایش مستقیم به مدیر لازم دارد — نه یک نسخه‌ی دوم و ناهماهنگ از آن.
+export async function getIndustryWinRates() {
   const closedDeals = await prisma.deal.findMany({
     where: { status: { in: ["won", "lost"] } },
     select: { industry: true, status: true },

@@ -53,4 +53,7 @@ export const api = {
   users: {
     list: () => request("/users"),
   },
+  analytics: {
+    winPatterns: () => request("/analytics/win-patterns"),
+  },
 };
