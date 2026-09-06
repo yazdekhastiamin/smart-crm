@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma.js";
 import { recalculateOpenDealProbabilities } from "./forecastEngine.js";
+import { getProvinceId } from "../utils/provinceMap.js";
 
 // اولویت‌بندی لیدها (بخش ۳.۳ SPEC): «کدام لید را الان پیگیری کنم؟»
 // سه عامل با وزن‌های زیر ترکیب می‌شوند. امتیاز پیش‌بینی بیشترین وزن را دارد
@@ -118,7 +119,7 @@ export async function getDealPriorityRanking() {
 
   const deals = await prisma.deal.findMany({
     where: { status: "open" },
-    include: { contact: true, stage: true },
+    include: { contact: true, stage: true, owner: true },
   });
   if (deals.length === 0) return [];
 
@@ -137,9 +138,13 @@ export async function getDealPriorityRanking() {
       dealId: deal.id,
       title: deal.title,
       customer: deal.contact.name,
+      city: deal.contact.city,
+      province: getProvinceId(deal.contact.city),
       stage: deal.stage.name,
       industry: deal.industry,
       value: deal.value,
+      owner: deal.owner?.name ?? null,
+      createdAt: deal.createdAt,
       probability: probabilityScore,
       similarityScore: similarity.score,
       score: Math.round(finalScore * 100),

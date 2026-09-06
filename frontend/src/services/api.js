@@ -55,5 +55,6 @@ export const api = {
   },
   analytics: {
     winPatterns: () => request("/analytics/win-patterns"),
+    geo: () => request("/analytics/geo"),
   },
 };

@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma.js";
+import { getProvinceId } from "../utils/provinceMap.js";
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -67,6 +68,8 @@ export async function getFollowUpAlerts() {
       dealId: deal.id,
       title: deal.title,
       customer: deal.contact.name,
+      city: deal.contact.city,
+      province: getProvinceId(deal.contact.city),
       stage: deal.stage.name,
       value: deal.value,
       probability: deal.probability,

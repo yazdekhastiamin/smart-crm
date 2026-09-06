@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma.js";
 import { getFollowUpAlerts } from "./alertEngine.js";
+import { SALES_TARGET } from "../config/company.js";
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -156,6 +157,7 @@ export async function getPipelineForecast() {
 
   return {
     totalForecast,
+    targetRevenue: SALES_TARGET,
     openDealsCount: deals.length,
     avgCycleDays,
     conversionRate,

@@ -4,7 +4,6 @@ import { useTheme } from "../context/ThemeContext";
 const links = [
   { to: "/", label: "داشبورد", end: true },
   { to: "/contacts", label: "مخاطبین" },
-  { to: "/deals", label: "قیف فروش" },
 ];
 
 export default function NavBar() {
