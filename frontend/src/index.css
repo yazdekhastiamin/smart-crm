@@ -103,64 +103,6 @@ h3 {
   letter-spacing: -0.01em;
 }
 
-/* --- nav --- */
-
-.navbar {
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
-  padding: 0 1.5rem;
-  height: 56px;
-  background: var(--teal);
-}
-
-.navbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--ink-on-dark);
-  font-weight: 700;
-  font-size: 1rem;
-  margin-inline-end: 0.5rem;
-}
-
-.navbar-brand-mark {
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  background: var(--amber-tint);
-  flex: none;
-}
-
-.navbar a {
-  color: var(--ink-on-dark-secondary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0.4rem 0.1rem;
-  border-bottom: 2px solid transparent;
-}
-
-.navbar a.active {
-  color: var(--ink-on-dark);
-  border-bottom-color: var(--amber-tint);
-}
-
-.theme-toggle {
-  margin-inline-start: auto;
-  background: none;
-  color: var(--ink-on-dark-secondary);
-  font-size: 1.05rem;
-  line-height: 1;
-  padding: 0.35rem 0.5rem;
-  border-radius: 999px;
-}
-
-.theme-toggle:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--ink-on-dark);
-}
-
 main {
   padding: 1.75rem 1.5rem 3rem;
   max-width: 1320px;

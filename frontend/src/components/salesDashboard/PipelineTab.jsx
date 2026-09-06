@@ -3,10 +3,24 @@ import { api } from "../../services/api";
 import NewDealModal from "../NewDealModal";
 import DealDetailModal from "../DealDetailModal";
 import { n } from "./format";
+import { getStrings } from "./i18n";
 
 const riskColor = (prob) => (prob >= 0.7 ? "var(--pos)" : prob >= 0.45 ? "var(--accent)" : "var(--accentDeep)");
 
-export default function PipelineTab({ refreshToken, onChanged }) {
+// نام مراحل در دیتابیس فقط فارسی است (بخش SPEC pipeline)؛ این فقط برای
+// *نمایش* در حالت زبان انگلیسی است، داده‌ی واقعی دست‌نخورده می‌ماند.
+const STAGE_NAME_EN = {
+  "سرنخ": "Lead",
+  "مذاکره": "Negotiation",
+  "پیش‌فاکتور ارسال‌شده": "Quote sent",
+  "چانه‌زنی نهایی": "Final negotiation",
+};
+
+export default function PipelineTab({ language = "fa", refreshToken, onChanged }) {
+  const t = getStrings(language);
+  const stageName = (name) => (language === "en" ? STAGE_NAME_EN[name] ?? name : name);
+  const dateLocale = language === "en" ? "en-US" : "fa-IR";
+
   const [stages, setStages] = useState([]);
   const [deals, setDeals] = useState([]);
   const [error, setError] = useState(null);
@@ -28,8 +42,11 @@ export default function PipelineTab({ refreshToken, onChanged }) {
 
   // ترتیب نزولی: چیدمان گرید در صفحه‌ی RTL باعث می‌شود اولین آیتم در DOM
   // سمت چپ قرار بگیرد، پس برای اینکه «سرنخ» (اولین مرحله) سمت راست
-  // (شروع خواندن در فارسی) بیفتد، ترتیب DOM باید نزولی باشد.
-  const openStages = stages.filter((s) => !s.isWon && !s.isLost).sort((a, b) => b.order - a.order);
+  // (شروع خواندن در فارسی) بیفتد، ترتیب DOM باید نزولی باشد. در حالت LTR
+  // (انگلیسی) این ترتیب برعکس باید باشد تا «Lead» باز هم اول (چپ) بیفتد.
+  const openStages = stages
+    .filter((s) => !s.isWon && !s.isLost)
+    .sort((a, b) => (language === "en" ? a.order - b.order : b.order - a.order));
 
   async function handleDrop(stageId) {
     setOverStage(null);
@@ -48,9 +65,9 @@ export default function PipelineTab({ refreshToken, onChanged }) {
   const finalCount = finalStage ? deals.filter((d) => d.stageId === finalStage.id).length : 0;
 
   const pipeStats = [
-    { k: "ارزش کل قیف (میلیارد تومان)", v: n(totalValue / 1_000_000_000, 1) },
-    { k: "ارزش وزنی بر پایه احتمال", v: n(weightedValue / 1_000_000_000, 1) },
-    { k: "معامله در چانه‌زنی نهایی", v: n(finalCount) },
+    { k: t.totalPipelineValue, v: n(totalValue / 1_000_000_000, 1) },
+    { k: t.weightedValue, v: n(weightedValue / 1_000_000_000, 1) },
+    { k: t.dealsInFinalStage, v: n(finalCount) },
   ];
 
   return (
@@ -63,7 +80,7 @@ export default function PipelineTab({ refreshToken, onChanged }) {
           </div>
         ))}
         <button className="sd-btn-ghost" onClick={() => setShowNewDeal(true)} style={{ padding: "0 22px" }}>
-          + فرصت جدید
+          {t.newDeal}
         </button>
       </div>
 
@@ -87,12 +104,12 @@ export default function PipelineTab({ refreshToken, onChanged }) {
               }}
             >
               <div style={{ display: "flex", alignItems: "baseline", gap: 9 }}>
-                <b style={{ fontSize: 15, fontWeight: 700 }}>{stage.name}</b>
+                <b style={{ fontSize: 15, fontWeight: 700 }}>{stageName(stage.name)}</b>
                 <span style={{ flex: 1 }} />
                 <span className="sd-num" style={{ fontSize: 12.5, color: "var(--faint)" }}>{n(stageDeals.length)}</span>
               </div>
               <div className="sd-num" style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-.03em", margin: "6px 0 14px" }}>
-                {n(sum / 1_000_000_000, 1)}<span style={{ fontSize: 12.5, fontWeight: 400, color: "var(--faint)" }}> میلیارد تومان</span>
+                {n(sum / 1_000_000_000, 1)}<span style={{ fontSize: 12.5, fontWeight: 400, color: "var(--faint)" }}> {t.billionToman}</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {stageDeals.map((deal) => (
@@ -116,17 +133,17 @@ export default function PipelineTab({ refreshToken, onChanged }) {
                     <div style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.65 }}>{deal.itemDescription || deal.title}</div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 2 }}>
                       <span className="sd-num" style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-.03em" }}>{n(deal.value / 1_000_000_000, 1)}</span>
-                      <span style={{ fontSize: 11.5, color: "var(--faint)" }}>میلیارد تومان</span>
+                      <span style={{ fontSize: 11.5, color: "var(--faint)" }}>{t.billionToman}</span>
                     </div>
                     <div className="sd-gauge-track sd-gauge-track-thin">
                       <i style={{ width: `${Math.round(deal.probability * 100)}%`, background: riskColor(deal.probability) }} />
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 11.5, color: "var(--faint)" }}>
-                      <span>احتمال <span className="sd-num" style={{ color: riskColor(deal.probability), fontWeight: 600 }}>{Math.round(deal.probability * 100)}%</span></span>
-                      <span>{deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString("fa-IR") : "—"}</span>
+                      <span>{t.probability} <span className="sd-num" style={{ color: riskColor(deal.probability), fontWeight: 600 }}>{Math.round(deal.probability * 100)}%</span></span>
+                      <span>{deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString(dateLocale) : "—"}</span>
                     </div>
                     <div style={{ display: "flex", gap: 8, fontSize: 11.5, color: "var(--faint)", paddingTop: 8, borderTop: "1px solid var(--line2)" }}>
-                      <span>{deal.contact?.city || "—"}</span><span>·</span><span>{deal.owner?.name || "بدون مسئول"}</span>
+                      <span>{deal.contact?.city || "—"}</span><span>·</span><span>{deal.owner?.name || t.unassigned}</span>
                     </div>
                   </div>
                 ))}

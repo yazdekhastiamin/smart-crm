@@ -1,8 +1,9 @@
-/* این صفحه (داشبورد فروش + قیف فروش) پالت رنگی مستقل خودش را دارد
-   (colorTokens.js) — این متغیرهای CSS با toBillio روی .sd-root ست می‌شوند
-   و مستقل از توکن‌های سراسری index.css عمل می‌کنند. */
+/* هدر/فوتر (AppHeader/AppFooter) و محتوای داشبورد/قیف فروش (.sd-content)
+   هر کدام مستقلاً توکن‌های رنگی خودشان را (colorTokens.js) به‌صورت inline
+   style روی خودشان ست می‌کنند — مستقل از توکن‌های سراسری index.css و بدون
+   نشت به صفحه‌ی مخاطبین که همچنان از سیستم رنگی قدیمی استفاده می‌کند. */
 
-.sd-root {
+.sd-content {
   background: var(--bg);
   color: var(--ink);
   font-family: Estedad, system-ui, sans-serif;
@@ -10,7 +11,6 @@
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
-  margin: -1.75rem -1.5rem -3rem;
 }
 
 .sd-num {
@@ -23,7 +23,11 @@
   align-items: center;
   gap: 18px;
   flex-wrap: wrap;
-  padding: 20px 24px 4px;
+  padding: 20px 24px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Estedad, system-ui, sans-serif;
+  border-bottom: 1px solid var(--line2);
 }
 
 .sd-tabs {
@@ -43,6 +47,7 @@
   font-weight: 400;
   color: var(--dim);
   border-bottom: 2px solid transparent;
+  text-decoration: none;
 }
 
 .sd-tab-active {
@@ -51,7 +56,7 @@
   border-bottom-color: var(--accent);
 }
 
-.sd-badge, .sd-theme-btn {
+.sd-badge, .sd-theme-btn, .sd-lang-btn, .sd-contacts-link {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -64,6 +69,7 @@
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .sd-theme-btn {
@@ -71,7 +77,23 @@
   color: var(--ink2);
 }
 
-.sd-badge:hover, .sd-theme-btn:hover {
+.sd-lang-btn {
+  font-weight: 700;
+  color: var(--accentDeep);
+  border-color: var(--accentDeep);
+}
+
+.sd-contacts-link {
+  color: var(--ink2);
+}
+
+.sd-contacts-link-active {
+  color: var(--accentDeep);
+  border-color: var(--accentDeep);
+  background: var(--sel);
+}
+
+.sd-badge:hover, .sd-theme-btn:hover, .sd-lang-btn:hover, .sd-contacts-link:hover {
   border-color: var(--accentDeep);
   color: var(--accentDeep);
 }
@@ -318,8 +340,10 @@
   align-items: center;
   gap: 16px;
   padding: 12px 24px 18px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Estedad, system-ui, sans-serif;
   border-top: 1px solid var(--line2);
-  margin: 0 24px;
 }
 
 .sd-logo-mark {

@@ -1,10 +1,10 @@
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import { LIGHT, DARK, varsToStyle } from "../components/salesDashboard/colorTokens";
-import DashboardTab from "../components/salesDashboard/DashboardTab";
+import PipelineTab from "../components/salesDashboard/PipelineTab";
 import "../components/salesDashboard/salesDashboard.css";
 
-export default function Dashboard({ province, onSelectProvince, refreshToken }) {
+export default function Pipeline({ refreshToken, onChanged }) {
   const { theme } = useTheme();
   const { language } = useLanguage();
   const colors = theme === "dark" ? DARK : LIGHT;
@@ -12,13 +12,7 @@ export default function Dashboard({ province, onSelectProvince, refreshToken }) 
 
   return (
     <div className="sd-content" dir={dir} style={varsToStyle(colors.vars)}>
-      <DashboardTab
-        colors={colors}
-        language={language}
-        selected={province}
-        onSelect={onSelectProvince}
-        refreshToken={refreshToken}
-      />
+      <PipelineTab language={language} refreshToken={refreshToken} onChanged={onChanged} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import * as d3 from "d3";
 import { n } from "./format";
+import { getStrings } from "./i18n";
 
 const VIEWBOX = { w: 1000, h: 600 };
 const FIT = [[24, 18], [976, 582]];
@@ -8,13 +9,15 @@ const FIT = [[24, 18], [976, 582]];
 // نقشه‌ی choropleth استان‌های ایران با مرز واقعی (GeoJSON کامل، نه ساده‌شده)
 // — دقیقاً همان تصویر طراحی: پروجکشن مرکاتور + رنگ‌آمیزی کوانتایل، برچسب
 // ۶ استان برتر، تول‌تیپ هاور، و کلیک برای فیلترکردن کل داشبورد روی آن استان.
-export default function IranMap({ geo, valuesById, metricLabel, formatValue, selected, onSelect, colors }) {
+export default function IranMap({ geo, valuesById, metricLabel, formatValue, selected, onSelect, colors, language = "fa" }) {
   const [hover, setHover] = useState(null);
+  const t = getStrings(language);
+  const nameKey = language === "en" ? "en" : "fa";
 
   const { path, provPaths, provLabels, legend, legendLo, legendHi, pname } = useMemo(() => {
     if (!geo) return { path: null, provPaths: [], provLabels: [], legend: [], legendLo: "—", legendHi: "—", pname: () => "—" };
 
-    const nameById = new Map(geo.features.map((f) => [f.properties.id, f.properties.fa]));
+    const nameById = new Map(geo.features.map((f) => [f.properties.id, f.properties[nameKey]]));
     const pname = (id) => nameById.get(id) ?? "—";
 
     const allValues = geo.features.map((f) => valuesById.get(f.properties.id)?.value ?? 0);
@@ -48,7 +51,7 @@ export default function IranMap({ geo, valuesById, metricLabel, formatValue, sel
       const dim = selected && selected !== id;
       const entry = valuesById.get(id);
       return {
-        x, y, name: f.properties.fa, val: formatValue(entry.value),
+        x, y, name: f.properties[nameKey], val: formatValue(entry.value),
         color: dim ? colors.labDim : colors.lab, valColor: dim ? colors.valDim : colors.val,
       };
     });
@@ -60,14 +63,14 @@ export default function IranMap({ geo, valuesById, metricLabel, formatValue, sel
       legendLo: formatValue(ext[0] ?? 0), legendHi: formatValue(ext[1] ?? 0),
       pname,
     };
-  }, [geo, valuesById, selected, hover, colors, formatValue]);
+  }, [geo, valuesById, selected, hover, colors, formatValue, nameKey]);
 
   const hv = hover ? valuesById.get(hover) : null;
 
   return (
     <section className="sd-card sd-map-card">
       <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
-        <h3 className="sd-h3">توزیع {metricLabel} در استان‌ها</h3>
+        <h3 className="sd-h3">{t.revenueByProvince(metricLabel)}</h3>
         <div style={{ flex: 1 }} />
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span className="sd-legend-label">{legendLo}</span>

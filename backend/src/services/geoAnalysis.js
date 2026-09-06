@@ -13,6 +13,11 @@ function monthShortLabel(date) {
   return new Intl.DateTimeFormat("fa-IR", { month: "short" }).format(date);
 }
 
+// برای حالت نمایش انگلیسی صفحه (بدون تبدیل تقویم، چون تاریخ رکوردها خودش میلادی است).
+function monthShortLabelEn(date) {
+  return new Intl.DateTimeFormat("en-US", { month: "short" }).format(date);
+}
+
 function monthKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
@@ -75,6 +80,7 @@ export async function getGeoAnalysis() {
         month: m.key,
         label: monthLabel(m.date),
         shortLabel: monthShortLabel(m.date),
+        shortLabelEn: monthShortLabelEn(m.date),
         revenue: Math.round(m.revenue),
       }));
   }
