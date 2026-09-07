@@ -64,6 +64,7 @@ Postgres، Prisma Client Extension) کاملاً مستقل از PaaS هستند
 | `DATABASE_URL` | همان connection string مرحله‌ی قبل |
 | `COMPANY_NAME` | نام شرکت شما (روی پیش‌فاکتور چاپ می‌شود) |
 | `PORT` | `4000` (باید با فیلد `port` در `liara.json` یکی باشد) |
+| `GEMINI_API_KEY` | کلید Google Gemini API (از aistudio.google.com/apikey) برای ویجت دستیار هوشمند داشبورد — بدون آن، دستیار پیام خطای مناسب نشان می‌دهد نه کرش |
 
 > **مهم:** متغیرهای محیطی را از طریق داشبورد یا دستور `liara env set` تنظیم
 > کنید — نه داخل `liara.json`. طبق مستندات خود لیارا، اگر بخش `envs` را در

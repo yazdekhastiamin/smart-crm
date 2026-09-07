@@ -3,6 +3,7 @@ import { api } from "../../services/api";
 import { n } from "./format";
 import { getStrings } from "./i18n";
 import IranMap from "./IranMap";
+import AssistantWidget from "./AssistantWidget";
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -101,6 +102,10 @@ export default function DashboardTab({ colors, language = "fa", selected, onSele
   const risk = (score) => (score >= 85 ? "var(--pos)" : score >= 72 ? "var(--ink)" : "var(--accentDeep)");
 
   return (
+    <>
+    <div style={{ padding: "14px 24px 0" }}>
+      <AssistantWidget language={language} />
+    </div>
     <main className="sd-dash-grid">
       <section className="sd-card" style={{ gridArea: "hero", display: "flex", flexDirection: "column", justifyContent: "center", gap: 6 }}>
         <div className="sd-hero-big">{formatToman(heroRevenue)}</div>
@@ -280,5 +285,6 @@ export default function DashboardTab({ colors, language = "fa", selected, onSele
         )}
       </section>
     </main>
+    </>
   );
 }

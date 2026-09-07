@@ -47,3 +47,21 @@ export function getProvinceId(city) {
   if (!city) return null;
   return CITY_TO_PROVINCE[city.trim()] ?? null;
 }
+
+// نام فارسی هر کد استان — برای پاسخ‌های خوانا (مثلاً به دستیار هوشمند)
+// بدون نیاز به بارگذاری کل GeoJSON نقشه در بک‌اند.
+const PROVINCE_NAME_FA = {
+  "IR.AR": "اردبیل", "IR.BS": "بوشهر", "IR.CM": "چهارمحال و بختیاری",
+  "IR.EA": "آذربایجان شرقی", "IR.ES": "اصفهان", "IR.FA": "فارس", "IR.GI": "گیلان",
+  "IR.GO": "گلستان", "IR.HD": "همدان", "IR.HG": "هرمزگان", "IR.IL": "ایلام",
+  "IR.KE": "کرمان", "IR.BK": "کرمانشاه", "IR.KZ": "خوزستان",
+  "IR.KB": "کهگیلویه و بویراحمد", "IR.KD": "کردستان", "IR.LO": "لرستان",
+  "IR.MK": "مرکزی", "IR.MN": "مازندران", "IR.KS": "خراسان شمالی",
+  "IR.QZ": "قزوین", "IR.QM": "قم", "IR.KV": "خراسان رضوی", "IR.SM": "سمنان",
+  "IR.SB": "سیستان و بلوچستان", "IR.KJ": "خراسان جنوبی", "IR.TH": "تهران",
+  "IR.WA": "آذربایجان غربی", "IR.YA": "یزد", "IR.ZA": "زنجان",
+};
+
+export function getProvinceName(provinceId) {
+  return PROVINCE_NAME_FA[provinceId] ?? provinceId ?? "نامشخص";
+}

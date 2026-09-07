@@ -42,6 +42,7 @@ Express هم API را سرو می‌کند و هم فایل‌های build شد�
 |---|---|
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` (از منوی reference variable، سرویس Postgres را انتخاب کنید تا خودکار وصل شود) |
 | `COMPANY_NAME` | نام شرکت شما — همان‌طور که باید روی پیش‌فاکتور چاپ شود |
+| `GEMINI_API_KEY` | کلید Google Gemini API (از aistudio.google.com/apikey) برای ویجت دستیار هوشمند داشبورد — بدون آن، دستیار پیام خطای مناسب نشان می‌دهد نه کرش |
 
 نیازی به تنظیم دستی `PORT` نیست — Railway خودش این متغیر را می‌سازد و
 سرور از قبل با `process.env.PORT` به آن گوش می‌دهد.

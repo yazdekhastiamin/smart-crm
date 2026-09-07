@@ -57,4 +57,8 @@ export const api = {
     winPatterns: () => request("/analytics/win-patterns"),
     geo: () => request("/analytics/geo"),
   },
+  assistant: {
+    chat: (message, history) =>
+      request("/assistant/chat", { method: "POST", body: JSON.stringify({ message, history }) }),
+  },
 };
