@@ -1,5 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { TOOL_IMPLEMENTATIONS } from "./aiAssistantTools.js";
+import { findCached, storeInCache, hasQuotaLeft, recordRealCall } from "./aiAssistantCache.js";
+
+const QUOTA_EXCEEDED_MESSAGE =
+  "سقف پرسش‌های امروز پر شده — فردا دوباره امتحان کنید. (این محدودیت داخلی برای دمو است تا در سهمیه‌ی رایگان Gemini بمانیم.)";
 
 const MODEL = "gemini-3.6-flash";
 const MAX_TOOL_ROUNDS = 5;
@@ -108,8 +112,24 @@ function toGeminiHistory(history) {
 }
 
 export async function runAssistantChat({ message, history = [] }) {
+  // کش فقط برای سوال‌های مستقل (شروع تازه‌ی مکالمه) چک می‌شود — اگر
+  // کاربر وسط یک مکالمه‌ی چندمرحله‌ای است، پاسخ کش‌شده ممکن است متن آن
+  // مکالمه را نادیده بگیرد، پس فقط history خالی از کش استفاده می‌کند.
+  if (history.length === 0) {
+    const cached = findCached(message);
+    if (cached) {
+      return { reply: cached.reply, chart: cached.chart, cached: true };
+    }
+  }
+
+  if (!hasQuotaLeft()) {
+    return { reply: QUOTA_EXCEEDED_MESSAGE, chart: null, quotaExceeded: true };
+  }
+
   try {
-    return await runLoop({ message, history });
+    const result = await runLoop({ message, history });
+    if (history.length === 0 && !result.quotaExceeded) storeInCache(message, result.reply, result.chart);
+    return { ...result, cached: false };
   } catch (err) {
     return { reply: friendlyErrorMessage(err), chart: null };
   }
@@ -123,6 +143,12 @@ async function runLoop({ message, history }) {
   let lastResponse = null;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+    // سهمیه هر بار قبل از یک فراخوانی *واقعی* به Gemini چک می‌شود — یک
+    // سوال ممکن است چند دور تابع‌فراخوانی نیاز داشته باشد که هرکدام یک
+    // درخواست واقعی است، نه فقط یکی به‌ازای کل سوال.
+    if (!hasQuotaLeft()) {
+      return { reply: lastResponse?.text || QUOTA_EXCEEDED_MESSAGE, chart, quotaExceeded: !lastResponse };
+    }
     const response = await ai.models.generateContent({
       model: MODEL,
       contents,
@@ -131,6 +157,7 @@ async function runLoop({ message, history }) {
         tools: [{ functionDeclarations: FUNCTION_DECLARATIONS }],
       },
     });
+    recordRealCall();
     lastResponse = response;
 
     const calls = response.functionCalls;

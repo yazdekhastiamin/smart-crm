@@ -11,7 +11,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const backendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SCRIPTS = ["prisma/seedOpenDeals.js", "prisma/seedForecastHistory.js", "prisma/importSampleDeals.js"];
+// ترتیب مهم است: seedForecastHistory.js تاریخچه را از روی معاملات *موجود*
+// در دیتابیس بازسازی می‌کند (بر اساس createdAt/updatedAt واقعی هرکدام)، پس
+// باید بعد از وارد شدن ۳۰ معامله‌ی تاریخی اجرا شود، وگرنه نرخ تبدیل هر ۱۴
+// روز صفر ثبت می‌شود (چون در آن لحظه هنوز هیچ معامله‌ی بسته‌شده‌ای وجود ندارد).
+const SCRIPTS = ["prisma/seedOpenDeals.js", "prisma/importSampleDeals.js", "prisma/seedForecastHistory.js"];
 
 async function main() {
   const existingDeals = await prisma.deal.count();

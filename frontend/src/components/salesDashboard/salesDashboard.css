@@ -408,6 +408,16 @@
   color: var(--faint);
 }
 
+.sd-assistant-cached-badge {
+  align-self: flex-start;
+  font-size: 10.5px;
+  color: var(--faint);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 8px;
+  margin-bottom: 3px;
+}
+
 .sd-assistant-number, .sd-assistant-chart {
   background: var(--card2);
   border: 1px solid var(--line);

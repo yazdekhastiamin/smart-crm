@@ -11,6 +11,7 @@ const STRINGS = {
     thinking: "در حال بررسی داده‌ها…",
     hint: "بر اساس داده‌ی واقعی همین CRM جواب می‌دهد.",
     error: "پاسخی دریافت نشد.",
+    cachedBadge: "پاسخ ذخیره‌شده",
   },
   en: {
     title: "Smart assistant",
@@ -19,6 +20,7 @@ const STRINGS = {
     thinking: "Checking the data…",
     hint: "Answers using this CRM's real data.",
     error: "No response received.",
+    cachedBadge: "Cached answer",
   },
 };
 
@@ -78,7 +80,10 @@ export default function AssistantWidget({ language = "fa" }) {
     setLoading(true);
     try {
       const res = await api.assistant.chat(question, history);
-      setMessages((prev) => [...prev, { role: "assistant", content: res.reply || t.error, chart: res.chart }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: res.reply || t.error, chart: res.chart, cached: !!res.cached },
+      ]);
     } catch (err) {
       setMessages((prev) => [...prev, { role: "assistant", content: err.message || t.error, chart: null }]);
     } finally {
@@ -93,6 +98,7 @@ export default function AssistantWidget({ language = "fa" }) {
         <div className="sd-assistant-messages">
           {messages.map((m, i) => (
             <div key={i} className={`sd-assistant-msg sd-assistant-msg-${m.role}`}>
+              {m.cached && <span className="sd-assistant-cached-badge">{t.cachedBadge}</span>}
               <div className="sd-assistant-bubble">{m.content}</div>
               {m.role === "assistant" && <ChartBlock chart={m.chart} />}
             </div>
